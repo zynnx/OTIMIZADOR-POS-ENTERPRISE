@@ -1,0 +1,14 @@
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\bin\Release\net8.0-windows\win-x64\Otimizador_POS.exe
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\bin\Release\net8.0-windows\win-x64\Otimizador_POS.deps.json
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\bin\Release\net8.0-windows\win-x64\Otimizador_POS.runtimeconfig.json
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\bin\Release\net8.0-windows\win-x64\Otimizador_POS.dll
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\bin\Release\net8.0-windows\win-x64\Otimizador_POS.pdb
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\Launcher.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\Launcher.AssemblyInfoInputs.cache
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\Launcher.AssemblyInfo.cs
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\Launcher.csproj.CoreCompileInputs.cache
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\Otimizador_POS.dll
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\refint\Otimizador_POS.dll
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\Otimizador_POS.pdb
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\Launcher.genruntimeconfig.cache
+C:\Users\TI_03\Desktop\OTIMIZADOR POS ENTERPRISE\Launcher\obj\Release\net8.0-windows\win-x64\ref\Otimizador_POS.dll
