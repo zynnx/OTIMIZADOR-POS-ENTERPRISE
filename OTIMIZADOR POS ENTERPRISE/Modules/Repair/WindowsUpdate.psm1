@@ -19,6 +19,61 @@ function Get-WindowsUpdateRepairStatus {
 
 #---------------------------------------------------------
 
+function Stop-ServiceSafe {
+
+    param([string]$Name)
+
+    try {
+
+        $Service = Get-Service -Name $Name -ErrorAction Stop
+
+        if ($Service.Status -ne 'Stopped') {
+
+            Stop-Service -Name $Name -Force -ErrorAction Stop
+            $Service.WaitForStatus('Stopped', '00:00:15')
+
+        }
+
+        Write-Log "$Name parado." "OK"
+
+    }
+    catch {
+
+        Write-Log "Serviço $Name já estava parado ou não existe." "WARNING"
+
+    }
+
+}
+
+#---------------------------------------------------------
+
+function Start-ServiceSafe {
+
+    param([string]$Name)
+
+    try {
+
+        $Service = Get-Service -Name $Name -ErrorAction Stop
+
+        if ($Service.Status -ne 'Running') {
+
+            Start-Service -Name $Name -ErrorAction Stop
+
+        }
+
+        Write-Log "$Name iniciado." "OK"
+
+    }
+    catch {
+
+        Write-Log "Serviço $Name não pôde ser iniciado." "WARNING"
+
+    }
+
+}
+
+#---------------------------------------------------------
+
 function Invoke-WindowsUpdateRepair {
 
     Write-Log "A reparar Windows Update..." "INFO"
@@ -31,50 +86,40 @@ function Invoke-WindowsUpdateRepair {
     )
 
     #
-    # Parar serviços
+    # Parar serviços com controlo seguro
     #
 
     foreach($Service in $Services){
 
-        try{
-
-            Stop-Service `
-                -Name $Service `
-                -Force `
-                -ErrorAction Stop
-
-            Write-Log "$Service parado." "OK"
-
-        }
-        catch{
-
-            Write-Log "$Service já estava parado ou não existe." "WARNING"
-
-        }
+        Stop-ServiceSafe -Name $Service
 
     }
 
     #
-    # Limpar SoftwareDistribution
+    # Limpar apenas os diretórios de cache do Windows Update
     #
 
     $SD = Join-Path $env:SystemRoot "SoftwareDistribution"
+    $SDDownload = Join-Path $SD "Download"
+    $SDDataStore = Join-Path $SD "DataStore"
 
-    if(Test-Path $SD){
+    foreach($Path in @($SDDownload, $SDDataStore)){
 
-        try{
+        if(Test-Path $Path){
 
-            Remove-Item "$SD\*" `
-                -Recurse `
-                -Force `
-                -ErrorAction Stop
+            try {
 
-            Write-Log "SoftwareDistribution limpa." "OK"
+                Get-ChildItem -Path $Path -Force -ErrorAction Stop |
+                    Remove-Item -Recurse -Force -ErrorAction Stop
 
-        }
-        catch{
+                Write-Log "Cache limpa em $Path." "OK"
 
-            Write-Log "Não foi possível limpar SoftwareDistribution." "WARNING"
+            }
+            catch {
+
+                Write-Log "Não foi possível limpar $Path." "WARNING"
+
+            }
 
         }
 
@@ -90,10 +135,8 @@ function Invoke-WindowsUpdateRepair {
 
         try{
 
-            Remove-Item "$Catroot\*" `
-                -Recurse `
-                -Force `
-                -ErrorAction Stop
+            Get-ChildItem -Path $Catroot -Force -ErrorAction Stop |
+                Remove-Item -Recurse -Force -ErrorAction Stop
 
             Write-Log "Catroot2 limpa." "OK"
 
@@ -107,25 +150,12 @@ function Invoke-WindowsUpdateRepair {
     }
 
     #
-    # Reiniciar serviços
+    # Reiniciar serviços com controlo seguro
     #
 
     foreach($Service in $Services){
 
-        try{
-
-            Start-Service `
-                -Name $Service `
-                -ErrorAction Stop
-
-            Write-Log "$Service iniciado." "OK"
-
-        }
-        catch{
-
-            Write-Log "$Service não pôde ser iniciado." "WARNING"
-
-        }
+        Start-ServiceSafe -Name $Service
 
     }
 

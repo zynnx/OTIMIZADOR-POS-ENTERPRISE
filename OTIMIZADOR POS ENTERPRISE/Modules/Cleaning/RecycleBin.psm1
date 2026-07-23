@@ -73,43 +73,8 @@ function Invoke-RecycleBinCleanup {
     #
     # Segunda tentativa
     #
-
-    foreach ($Drive in Get-PSDrive -PSProvider FileSystem) {
-
-        $Recycle = Join-Path $Drive.Root '$Recycle.Bin'
-
-        if (!(Test-Path $Recycle)) {
-            continue
-        }
-
-        try {
-
-            Get-ChildItem `
-                -Path $Recycle `
-                -Force `
-                -ErrorAction SilentlyContinue |
-
-            ForEach-Object {
-
-                try {
-
-                    Remove-Item `
-                        $_.FullName `
-                        -Recurse `
-                        -Force `
-                        -ErrorAction Stop
-
-                }
-                catch {
-                }
-
-            }
-
-        }
-        catch {
-        }
-
-    }
+    # Mantemos a limpeza da reciclagem apenas no percurso mais seguro.
+    # Não é necessário tocar em outras áreas do sistema.
 
     Write-Log "Limpeza manual da Reciclagem concluída." "OK"
 

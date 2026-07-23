@@ -56,16 +56,11 @@ function Invoke-ServicesOptimization {
     Write-Log "A otimizar serviços..." "INFO"
 
     #
-    # Serviços seguros para POS
+    # Serviços seguros para POS/empresa
     #
-
-    Set-ServiceStartupSafe "DiagTrack" "Disabled"
-
-    Set-ServiceStartupSafe "MapsBroker" "Disabled"
-
-    Set-ServiceStartupSafe "Fax" "Disabled"
-
-    Set-ServiceStartupSafe "RemoteRegistry" "Disabled"
+    # Apenas ajustamos serviços sem impacto crítico em suporte remoto,
+    # VPN ou gestão de rede. Evitamos qualquer alteração em serviços
+    # de administração remota ou rede empresarial.
 
     Set-ServiceStartupSafe "WerSvc" "Manual"
 
