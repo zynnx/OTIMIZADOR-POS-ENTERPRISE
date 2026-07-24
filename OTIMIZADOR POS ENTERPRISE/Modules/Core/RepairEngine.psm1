@@ -97,6 +97,14 @@ function Start-Repair {
 
         try{
 
+            if (-not $Item.RepairFunction) {
+                throw "RepairFunction is not defined for $($Item.Name)."
+            }
+
+            if (-not (Get-Command -Name $Item.RepairFunction -ErrorAction SilentlyContinue)) {
+                throw "Repair function '$($Item.RepairFunction)' was not found."
+            }
+
             & $Item.RepairFunction
 
             $Resultados += [PSCustomObject]@{

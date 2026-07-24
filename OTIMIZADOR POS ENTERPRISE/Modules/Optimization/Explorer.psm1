@@ -49,53 +49,38 @@ function Invoke-ExplorerOptimization {
     # Create key if it does not exist
     #
 
-    New-Item `
-        -Path $Path `
-        -Force | Out-Null
+    if (-not (Test-Path $Path)) {
+        try {
+            New-Item `
+                -Path $Path `
+                -Force | Out-Null
+        }
+        catch {
+            throw ("Could not create registry path {0}: {1}" -f $Path, $_.Exception.Message)
+        }
+    }
 
-    #
-    # Open in This PC
-    #
+    $Properties = @{
+        LaunchTo     = 1
+        HideFileExt  = 0
+        ShowRecent   = 0
+        ShowFrequent = 0
+    }
 
-    Set-ItemProperty `
-        -Path $Path `
-        -Name LaunchTo `
-        -Value 1 `
-        -Type DWord
+    foreach ($Name in $Properties.Keys) {
+        try {
+            New-ItemProperty `
+                -Path $Path `
+                -Name $Name `
+                -Value $Properties[$Name] `
+                -PropertyType DWord `
+                -Force | Out-Null
+        }
+        catch {
+            throw "Could not set registry property '$Name': $($_.Exception.Message)"
+        }
+    }
 
-    #
-    # Show file extensions
-    #
-
-    Set-ItemProperty `
-        -Path $Path `
-        -Name HideFileExt `
-        -Value 0 `
-        -Type DWord
-
-    #
-    # Do not show recent files
-    #
-
-    Set-ItemProperty `
-        -Path $Path `
-        -Name ShowRecent `
-        -Value 0 `
-        -Type DWord `
-        -ErrorAction SilentlyContinue
-
-    #
-    # Do not show frequent folders
-    #
-
-    Set-ItemProperty `
-        -Path $Path `
-        -Name ShowFrequent `
-        -Value 0 `
-        -Type DWord `
-        -ErrorAction SilentlyContinue
-
-    #
     # Restart Explorer
     #
 

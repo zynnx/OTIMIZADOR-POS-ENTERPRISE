@@ -1,0 +1,9 @@
+{
+    "ClearDNS": true,
+
+    "ResetWinsock": true,
+
+    "FlushStore": true,
+
+    "OptimizeNTFS": true
+}

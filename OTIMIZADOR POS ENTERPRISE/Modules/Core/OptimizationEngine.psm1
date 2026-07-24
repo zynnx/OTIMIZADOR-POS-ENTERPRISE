@@ -112,6 +112,14 @@ function Start-Optimization {
 
         try{
 
+            if (-not $Item.OptimizeFunction) {
+                throw "OptimizeFunction is not defined for $($Item.Name)."
+            }
+
+            if (-not (Get-Command -Name $Item.OptimizeFunction -ErrorAction SilentlyContinue)) {
+                throw "Optimize function '$($Item.OptimizeFunction)' was not found."
+            }
+
             & $Item.OptimizeFunction
 
             Write-Success ("{0} completed." -f $Item.Name)

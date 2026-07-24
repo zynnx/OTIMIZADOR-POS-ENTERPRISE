@@ -1,0 +1,9 @@
+{
+    "CleanTemp": true,
+
+    "CleanWindowsTemp": true,
+
+    "CleanPrefetch": false,
+
+    "CleanRecycleBin": true
+}

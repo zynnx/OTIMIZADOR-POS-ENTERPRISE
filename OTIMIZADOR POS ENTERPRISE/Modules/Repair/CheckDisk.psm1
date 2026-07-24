@@ -11,6 +11,8 @@ function Get-CheckDiskStatus {
 
         Status = "Ready"
 
+        RepairFunction = "Invoke-CheckDiskRepair"
+
     }
 
 }

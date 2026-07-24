@@ -15,7 +15,7 @@ function Get-PowerPlanStatus {
 
         if ($Current) {
 
-            if ($Current -match "High performance|Alto desempenho") {
+            if ($Current -match "(?i)High performance|Alto desempenho|Elevado desempenho") {
 
                 $Status = "Optimized"
 
@@ -61,7 +61,7 @@ function Invoke-PowerPlanOptimization {
 
     $High = $Plans | Where-Object {
 
-        $_ -match "High performance|Alto desempenho"
+        $_ -match "(?i)High performance|Alto desempenho|Elevado desempenho"
 
     }
 
@@ -89,9 +89,13 @@ function Invoke-PowerPlanOptimization {
 
             $Guid = $Matches[1]
 
-            powercfg /S $Guid
-
-            Write-Log "High Performance plan activated." "OK"
+            try {
+                powercfg /S $Guid
+                Write-Log "High Performance plan activated." "OK"
+            }
+            catch {
+                throw "Could not activate High Performance plan: $($_.Exception.Message)"
+            }
 
         }
 

@@ -85,6 +85,8 @@ if(!(Test-Path $ConfigFile))
 
 $Global:Config = Get-Content $ConfigFile -Raw | ConvertFrom-Json
 
+#Load-Config
+
 #-------------------------
 # Load modules
 #-------------------------
