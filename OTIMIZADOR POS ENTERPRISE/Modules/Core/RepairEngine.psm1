@@ -55,6 +55,12 @@ function Start-Repair {
 
     $Watch = Start-Stopwatch
 
+    $Global:App.Results.Repair = [PSCustomObject]@{
+        Date = Get-Date
+        Success = 0
+        Errors = 0
+    }
+
     $Items = Get-RepairItems
 
     if ($Items.Count -eq 0){
@@ -166,17 +172,18 @@ function Start-Repair {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
 
+    $Global:App.Results.Repair = [PSCustomObject]@{
+        Date = Get-Date
+        Success = $OK
+        Errors = $Erro
+    }
+
     Write-Log "Repair completed." "OK"
 
     Pause-App
 
 }
 
-$Global:App.Results.Repair = [PSCustomObject]@{
-    Date = Get-Date
-    Success = $OK
-    Errors = $Erro
-}
 Export-ModuleMember -Function *
 
 
