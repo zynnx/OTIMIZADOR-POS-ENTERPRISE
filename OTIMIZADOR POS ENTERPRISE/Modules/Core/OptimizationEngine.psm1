@@ -129,5 +129,10 @@ function Start-Optimization {
     Pause-App
 
 }
+$Global:App.Results.Optimization = [PSCustomObject]@{
+    Date = Get-Date
+    Success = $OK
+    Errors = $Erro
+}
 
 Export-ModuleMember -Function *

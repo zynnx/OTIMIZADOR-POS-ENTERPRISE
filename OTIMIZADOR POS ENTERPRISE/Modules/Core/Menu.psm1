@@ -92,7 +92,7 @@ function Start-MainMenu {
 
             "5" {
 
-                Start-Reports
+                Start-Diagnostic
 
             }
 

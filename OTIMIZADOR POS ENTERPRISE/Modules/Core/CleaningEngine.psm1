@@ -174,4 +174,12 @@ function Start-Cleaning {
 
 }
 
+$Global:App.Results.Cleaning = [PSCustomObject]@{
+    Date = Get-Date
+    SpaceRecovered = $RecoveredTotal
+    Items = $Items.Count
+    Success = $Ok
+    Errors = $Erro
+}
+
 Export-ModuleMember -Function *

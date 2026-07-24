@@ -160,4 +160,9 @@ function Start-Repair {
 
 }
 
+$Global:App.Results.Repair = [PSCustomObject]@{
+    Date = Get-Date
+    Success = $OK
+    Errors = $Erro
+}
 Export-ModuleMember -Function *
