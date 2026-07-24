@@ -1,15 +1,15 @@
-#=========================================================
+﻿#=========================================================
 # Services.psm1
-# Otimização de Serviços
+# Services Optimization
 #=========================================================
 
 function Get-ServicesStatus {
 
     return [PSCustomObject]@{
 
-        Name = "Serviços"
+        Name = "Services"
 
-        Status = "Pronto"
+        Status = "Ready"
 
         OptimizeFunction = "Invoke-ServicesOptimization"
 
@@ -43,7 +43,7 @@ function Set-ServiceStartupSafe {
     }
     catch {
 
-        Write-Log "$Name não encontrado." "WARNING"
+        Write-Log "$Name not found." "WARNING"
 
     }
 
@@ -53,14 +53,14 @@ function Set-ServiceStartupSafe {
 
 function Invoke-ServicesOptimization {
 
-    Write-Log "A otimizar serviços..." "INFO"
+    Write-Log "Optimizing services..." "INFO"
 
     #
-    # Serviços seguros para POS/empresa
+    # Safe services for POS/business
     #
-    # Apenas ajustamos serviços sem impacto crítico em suporte remoto,
-    # VPN ou gestão de rede. Evitamos qualquer alteração em serviços
-    # de administração remota ou rede empresarial.
+    # We only adjust services without critical impact on remote support,
+    # VPN or network management. We avoid any changes to services
+    # of remote administration or enterprise network.
 
     Set-ServiceStartupSafe "WerSvc" "Manual"
 
@@ -68,8 +68,15 @@ function Invoke-ServicesOptimization {
 
     Set-ServiceStartupSafe "SysMain" "Manual"
 
-    Write-Log "Serviços otimizados." "OK"
+    Write-Log "Services optimized." "OK"
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+
+

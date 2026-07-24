@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # DISM.psm1
-# Reparação da imagem do Windows
+# Windows image repair
 #=========================================================
 
 function Get-DISMStatus {
@@ -9,7 +9,7 @@ function Get-DISMStatus {
 
         Name = "DISM RestoreHealth"
 
-        Status = "Pronto"
+        Status = "Ready"
 
         RepairFunction = "Invoke-DISMRepair"
 
@@ -21,10 +21,10 @@ function Get-DISMStatus {
 
 function Invoke-DISMRepair {
 
-    Write-Log "A executar DISM..." "INFO"
+    Write-Log "Executing DISM..." "INFO"
 
     Write-Host ""
-    Write-Host "Esta operação pode demorar vários minutos..." -ForegroundColor Yellow
+    Write-Host "This operation may take several minutes..." -ForegroundColor Yellow
     Write-Host ""
 
     $Arguments = @(
@@ -43,15 +43,19 @@ function Invoke-DISMRepair {
 
     if($Process.ExitCode -eq 0){
 
-        Write-Log "DISM concluído com sucesso." "OK"
+        Write-Log "DISM completed successfully." "OK"
 
     }
     else{
 
-        throw "DISM terminou com o código $($Process.ExitCode)."
+        throw "DISM finished with exit code $($Process.ExitCode)."
 
     }
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+

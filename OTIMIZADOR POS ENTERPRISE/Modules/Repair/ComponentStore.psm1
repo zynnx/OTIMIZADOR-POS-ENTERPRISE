@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # ComponentStore.psm1
-# Limpeza do Component Store (WinSxS)
+# Component Store cleanup (WinSxS)
 #=========================================================
 
 function Get-ComponentStoreStatus {
@@ -9,7 +9,7 @@ function Get-ComponentStoreStatus {
 
         Name = "Component Store"
 
-        Status = "Pronto"
+        Status = "Ready"
 
         RepairFunction = "Invoke-ComponentStoreRepair"
 
@@ -21,10 +21,10 @@ function Get-ComponentStoreStatus {
 
 function Invoke-ComponentStoreRepair {
 
-    Write-Log "A limpar o Component Store..." "INFO"
+    Write-Log "Cleaning the Component Store..." "INFO"
 
     Write-Host ""
-    Write-Host "A otimizar a imagem do Windows..." -ForegroundColor Yellow
+    Write-Host "Optimizing the Windows image..." -ForegroundColor Yellow
     Write-Host ""
 
     $Arguments = @(
@@ -42,15 +42,16 @@ function Invoke-ComponentStoreRepair {
 
     if($Process.ExitCode -eq 0){
 
-        Write-Log "Component Store limpo com sucesso." "OK"
+        Write-Log "Component Store cleaned successfully." "OK"
 
     }
     else{
 
-        throw "DISM terminou com o código $($Process.ExitCode)."
+        throw "DISM finished with exit code $($Process.ExitCode)."
 
     }
 
 }
 
 Export-ModuleMember -Function *
+

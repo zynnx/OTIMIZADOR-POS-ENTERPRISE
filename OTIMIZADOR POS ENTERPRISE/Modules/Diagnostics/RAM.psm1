@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # RAM.psm1
-# Diagnóstico da Memória RAM
+# RAM Diagnostic
 #=========================================================
 
 function Get-RAMDiagnostic {
@@ -32,7 +32,7 @@ function Invoke-RAMDiagnostic {
         $Percent = [math]::Round(($UsedGB / $TotalGB) * 100)
 
         #
-        # Classificação
+        # Classification
         #
 
         if($Percent -lt 70){
@@ -44,23 +44,23 @@ function Invoke-RAMDiagnostic {
         }
         elseif($Percent -lt 80){
 
-            $Status = "ATENÇÃO"
+            $Status = "WARNING"
             $Score = 90
-            $Recommendation = "Verificar aplicações abertas."
+            $Recommendation = "Check open applications."
 
         }
         elseif($Percent -lt 90){
 
             $Status = "ELEVADA"
             $Score = 70
-            $Recommendation = "Fechar aplicações desnecessárias."
+            $Recommendation = "Close unnecessary applications."
 
         }
         else{
 
-            $Status = "CRÍTICO"
+            $Status = "CRITICAL"
             $Score = 30
-            $Recommendation = "Reiniciar o POS ou aumentar a memória RAM."
+            $Recommendation = "Restart the POS or increase RAM."
 
         }
 
@@ -72,7 +72,7 @@ function Invoke-RAMDiagnostic {
 
             Score = $Score
 
-            Details = "$UsedGB GB utilizados de $TotalGB GB ($Percent%)"
+            Details = "$UsedGB GB used of $TotalGB GB ($Percent%)"
 
             Recommendation = $Recommendation
 
@@ -85,13 +85,13 @@ function Invoke-RAMDiagnostic {
 
             Name = "RAM"
 
-            Status = "ERRO"
+            Status = "ERROR"
 
             Score = 0
 
             Details = $_.Exception.Message
 
-            Recommendation = "Verificar memória."
+            Recommendation = "Check memory."
 
         }
 
@@ -100,3 +100,10 @@ function Invoke-RAMDiagnostic {
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+
+

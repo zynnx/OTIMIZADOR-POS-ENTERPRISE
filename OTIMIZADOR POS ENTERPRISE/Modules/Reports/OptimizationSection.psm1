@@ -1,4 +1,4 @@
-#=========================================================
+﻿#=========================================================
 # OptimizationSection.psm1
 #=========================================================
 
@@ -6,7 +6,7 @@ function Get-OptimizationSection {
 
     if(-not $Global:App.Results.Optimization){
 
-        return "<h2>Otimização</h2><p>Não executada.</p><br>"
+        return "<h2>Optimization</h2><p>Not executed.</p><br>"
 
     }
 
@@ -14,17 +14,17 @@ function Get-OptimizationSection {
 
 @"
 
-<h2>Otimização do Windows</h2>
+<h2>Windows Optimization</h2>
 
 <table>
 
 <tr><th>Campo</th><th>Valor</th></tr>
 
-<tr><td>Data</td><td>$($R.Date)</td></tr>
+<tr><td>Date</td><td>$($R.Date)</td></tr>
 
 <tr><td>Sucessos</td><td>$($R.Success)</td></tr>
 
-<tr><td>Erros</td><td>$($R.Errors)</td></tr>
+<tr><td>Errors</td><td>$($R.Errors)</td></tr>
 
 </table>
 

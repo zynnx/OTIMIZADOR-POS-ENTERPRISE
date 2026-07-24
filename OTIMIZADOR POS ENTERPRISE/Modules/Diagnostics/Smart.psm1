@@ -1,6 +1,6 @@
 #=========================================================
 # Smart.psm1
-# Diagnóstico SMART do Disco
+# SMART Disk Diagnostic
 #=========================================================
 
 function Get-SmartDiagnostic {
@@ -36,13 +36,13 @@ function Invoke-SmartDiagnostic {
 
                     Name = "SMART"
 
-                    Status = "CRÍTICO"
+                    Status = "CRITICAL"
 
                     Score = 20
 
-                    Details = "O disco indica possível falha."
+                    Details = "Disk indicates possible failure."
 
-                    Recommendation = "Substituir o disco o mais rapidamente possível."
+                    Recommendation = "Replace the disk as soon as possible."
 
                 }
 
@@ -57,7 +57,7 @@ function Invoke-SmartDiagnostic {
 
                     Score = 100
 
-                    Details = "Nenhuma falha prevista pelo SMART."
+                    Details = "No SMART failure predicted."
 
                     Recommendation = ""
 
@@ -71,11 +71,11 @@ function Invoke-SmartDiagnostic {
 
             Name = "SMART"
 
-            Status = "DESCONHECIDO"
+            Status = "UNKNOWN"
 
             Score = 80
 
-            Details = "Não foi possível obter informações SMART."
+            Details = "Unable to obtain SMART information."
 
             Recommendation = ""
 
@@ -88,11 +88,11 @@ function Invoke-SmartDiagnostic {
 
             Name = "SMART"
 
-            Status = "NÃO SUPORTADO"
+            Status = "NOT SUPPORTED"
 
             Score = 80
 
-            Details = "O hardware ou controlador não disponibiliza SMART."
+            Details = "Hardware or controller does not provide SMART."
 
             Recommendation = ""
 

@@ -46,15 +46,15 @@ function Invoke-DeliveryOptimizationCleanup {
 
     if (!(Test-Folder $Path)) {
 
-        Write-Log "Cache Delivery Optimization não encontrada." "WARNING"
+        Write-Log "Delivery Optimization cache not found." "WARNING"
         return
 
     }
 
-    Write-Log "A limpar Delivery Optimization..." "INFO"
+    Write-Log "Cleaning Delivery Optimization cache..." "INFO"
 
     #
-    # Tenta parar o serviço DoSvc
+    # Attempt to stop the DoSvc service
     #
 
     try {
@@ -72,12 +72,12 @@ function Invoke-DeliveryOptimizationCleanup {
     }
     catch {
 
-        Write-Log "Não foi possível parar o serviço DoSvc." "WARNING"
+        Write-Log "Could not stop service DoSvc." "WARNING"
 
     }
 
     #
-    # Limpeza
+    # Cleanup
     #
 
     $Removed = 0
@@ -119,7 +119,7 @@ function Invoke-DeliveryOptimizationCleanup {
     }
 
     #
-    # Reinicia o serviço
+    # Restart the service
     #
 
     try {
@@ -135,15 +135,15 @@ function Invoke-DeliveryOptimizationCleanup {
     }
     catch {
 
-        Write-Log "Não foi possível iniciar o serviço DoSvc." "WARNING"
+        Write-Log "Could not start service DoSvc." "WARNING"
 
     }
 
-    Write-Log "Itens removidos: $Removed" "INFO"
+    Write-Log "Items removed: $Removed" "INFO"
 
     if ($Errors -gt 0) {
 
-        Write-Log "Itens ignorados: $Errors" "WARNING"
+        Write-Log "Items ignored: $Errors" "WARNING"
 
     }
 

@@ -1,13 +1,13 @@
-#=========================================================
+﻿#=========================================================
 # Disk.psm1
-# Diagnóstico do Disco
+# Disk Diagnostic
 #=========================================================
 
 function Get-DiskDiagnostic {
 
     return [PSCustomObject]@{
 
-        Name = "Disco"
+        Name = "Disk"
 
         DiagnosticFunction = "Invoke-DiskDiagnostic"
 
@@ -31,7 +31,7 @@ function Invoke-DiskDiagnostic {
         $Percent = [math]::Round(($Drive.FreeSpace / $Drive.Size) * 100)
 
         #
-        # Classificação
+        # Classification
         #
 
         if($Percent -ge 20){
@@ -45,50 +45,50 @@ function Invoke-DiskDiagnostic {
         }
         elseif($Percent -ge 15){
 
-            $Status = "ATENÇÃO"
+            $Status = "WARNING"
 
             $Score = 90
 
-            $Recommendation = "Executar Limpeza Inteligente"
+            $Recommendation = "Run Smart Cleaning"
 
         }
         elseif($Percent -ge 10){
 
-            $Status = "ATENÇÃO"
+            $Status = "WARNING"
 
             $Score = 70
 
-            $Recommendation = "Executar Limpeza Inteligente"
+            $Recommendation = "Run Smart Cleaning"
 
         }
         elseif($Percent -ge 5){
 
-            $Status = "CRÍTICO"
+            $Status = "CRITICAL"
 
             $Score = 40
 
-            $Recommendation = "Libertar espaço urgentemente"
+            $Recommendation = "Free up space urgently"
 
         }
         else{
 
-            $Status = "CRÍTICO"
+            $Status = "CRITICAL"
 
             $Score = 10
 
-            $Recommendation = "Disco quase cheio"
+            $Recommendation = "Disk almost full"
 
         }
 
         return [PSCustomObject]@{
 
-            Name = "Disco"
+            Name = "Disk"
 
             Status = $Status
 
             Score = $Score
 
-            Details = "$FreeGB GB livres de $TotalGB GB ($Percent%)"
+            Details = "$FreeGB GB free of $TotalGB GB ($Percent%)"
 
             Recommendation = $Recommendation
 
@@ -99,15 +99,15 @@ function Invoke-DiskDiagnostic {
 
         return [PSCustomObject]@{
 
-            Name = "Disco"
+            Name = "Disk"
 
-            Status = "ERRO"
+            Status = "ERROR"
 
             Score = 0
 
             Details = $_.Exception.Message
 
-            Recommendation = "Verificar disco"
+            Recommendation = "Check disk"
 
         }
 
@@ -116,3 +116,9 @@ function Invoke-DiskDiagnostic {
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+

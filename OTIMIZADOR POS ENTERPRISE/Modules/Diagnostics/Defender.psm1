@@ -1,6 +1,6 @@
 #=========================================================
 # Defender.psm1
-# Diagnóstico do Microsoft Defender
+# Microsoft Defender Diagnostic
 #=========================================================
 
 function Get-DefenderDiagnostic {
@@ -28,15 +28,15 @@ function Invoke-DefenderDiagnostic {
             $Status = "OK"
             $Score = 100
             $Recommendation = ""
-            $Details = "Proteção em tempo real ativa."
+            $Details = "Real-time protection is enabled."
 
         }
         else {
 
-            $Status = "CRÍTICO"
+            $Status = "CRITICAL"
             $Score = 20
-            $Recommendation = "Ativar o Microsoft Defender."
-            $Details = "Proteção em tempo real desativada."
+            $Recommendation = "Enable Microsoft Defender."
+            $Details = "Real-time protection is disabled."
 
         }
 
@@ -56,9 +56,9 @@ function Invoke-DefenderDiagnostic {
         return [PSCustomObject]@{
 
             Name = "Defender"
-            Status = "NÃO DISPONÍVEL"
+            Status = "NOT AVAILABLE"
             Score = 80
-            Details = "Microsoft Defender não está instalado ou foi substituído por outro antivírus."
+            Details = "Microsoft Defender is not installed or has been replaced by another antivirus."
             Recommendation = ""
 
         }

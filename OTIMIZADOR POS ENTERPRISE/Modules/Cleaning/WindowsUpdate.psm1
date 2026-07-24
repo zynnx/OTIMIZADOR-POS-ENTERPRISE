@@ -1,6 +1,6 @@
 #=========================================================
 # WindowsUpdate.psm1
-# Limpeza da cache do Windows Update
+# Windows Update cache cleanup
 #=========================================================
 
 function Get-WindowsUpdateAnalysis {
@@ -62,7 +62,7 @@ function Stop-ServiceSafe {
     }
     catch {
 
-        Write-Log "Não foi possível parar o serviço $Name." "WARNING"
+        Write-Log "Could not stop service $Name." "WARNING"
 
     }
 
@@ -87,7 +87,7 @@ function Start-ServiceSafe {
     }
     catch {
 
-        Write-Log "Não foi possível iniciar o serviço $Name." "WARNING"
+        Write-Log "Could not start service $Name." "WARNING"
 
     }
 
@@ -101,13 +101,13 @@ function Invoke-WindowsUpdateCleanup {
 
     if (!(Test-Folder $Path)) {
 
-        Write-Log "Pasta SoftwareDistribution não encontrada." "WARNING"
+        Write-Log "SoftwareDistribution folder not found." "WARNING"
 
         return
 
     }
 
-    Write-Log "A limpar Windows Update..." "INFO"
+    Write-Log "Cleaning Windows Update..." "INFO"
 
     Stop-ServiceSafe "wuauserv"
     Stop-ServiceSafe "bits"
@@ -124,7 +124,7 @@ function Invoke-WindowsUpdateCleanup {
             -Recurse `
             -ErrorAction SilentlyContinue
 
-        Write-Log "Cache do Windows Update removida." "OK"
+        Write-Log "Windows Update cache removed." "OK"
 
     }
     catch {

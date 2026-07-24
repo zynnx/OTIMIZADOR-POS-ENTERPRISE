@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Configuration = "Release"
 )
 
@@ -25,8 +25,10 @@ Set-Location $LauncherDir
 & dotnet publish -c $Configuration -o .\publish
 
 if ($LASTEXITCODE -ne 0) {
-    throw "Falha ao publicar o executável."
+    throw "Failed to publish the executable."
 }
 
 Write-Host ""
-Write-Host "Executável gerado em: $PublishDir\Otimizador_POS.exe" -ForegroundColor Green
+Write-Host "Executable generated at: $PublishDir\Otimizador_POS.exe" -ForegroundColor Green
+
+

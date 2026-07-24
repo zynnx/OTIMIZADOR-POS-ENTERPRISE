@@ -1,6 +1,6 @@
 #=========================================================
 # WindowsTemp.psm1
-# Limpeza da pasta C:\Windows\Temp
+# C:\Windows\Temp cleanup
 #=========================================================
 
 function Get-WindowsTempAnalysis {
@@ -49,12 +49,12 @@ function Invoke-WindowsTempCleanup {
 
     if (!(Test-Folder $Path)) {
 
-        Write-Log "A pasta Windows TEMP não existe." "WARNING"
+        Write-Log "Windows TEMP folder does not exist." "WARNING"
         return
 
     }
 
-    Write-Log "A limpar Windows TEMP..." "INFO"
+    Write-Log "Cleaning Windows TEMP..." "INFO"
 
     $Removed = 0
     $Errors  = 0
@@ -81,7 +81,7 @@ function Invoke-WindowsTempCleanup {
             }
             catch {
 
-                # Ficheiros em utilização ou protegidos
+                # Files in use or protected
                 $Errors++
 
             }
@@ -95,11 +95,11 @@ function Invoke-WindowsTempCleanup {
 
     }
 
-    Write-Log "Itens removidos: $Removed" "INFO"
+    Write-Log "Items removed: $Removed" "INFO"
 
     if ($Errors -gt 0) {
 
-        Write-Log "Itens ignorados (em utilização): $Errors" "WARNING"
+        Write-Log "Items ignored (in use): $Errors" "WARNING"
 
     }
 

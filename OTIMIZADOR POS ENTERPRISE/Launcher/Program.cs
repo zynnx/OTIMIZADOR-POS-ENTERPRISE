@@ -11,7 +11,7 @@ var resourceStream = assembly.GetManifestResourceStream("payload.zip");
 if (resourceStream == null)
 {
     Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine("Pacote embutido não encontrado no executável.");
+    Console.WriteLine("Embedded package not found in executable.");
     Console.ResetColor();
     Environment.Exit(1);
 }
@@ -27,7 +27,7 @@ var scriptPath = Path.Combine(appRoot, "Otimizador_POS.ps1");
 if (!File.Exists(scriptPath))
 {
     Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine($"Script principal não encontrado no pacote embutido: {scriptPath}");
+    Console.WriteLine($"Main script not found in embedded package: {scriptPath}");
     Console.ResetColor();
     Environment.Exit(1);
 }
@@ -49,7 +49,7 @@ try
 catch (Exception ex)
 {
     Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine("Falha ao iniciar a aplicação:");
+    Console.WriteLine("Failed to start the application:");
     Console.WriteLine(ex.Message);
     Console.ResetColor();
     Environment.Exit(1);

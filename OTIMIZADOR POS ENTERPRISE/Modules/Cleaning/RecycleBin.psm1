@@ -1,6 +1,6 @@
 #=========================================================
 # RecycleBin.psm1
-# Limpeza da Reciclagem
+# Recycle Bin cleanup
 #=========================================================
 
 function Get-RecycleBinAnalysis {
@@ -29,7 +29,7 @@ function Get-RecycleBinAnalysis {
 
     return [PSCustomObject]@{
 
-        Name            = "Reciclagem"
+        Name            = "Recycle Bin"
 
         Path            = "$Recycle.Bin"
 
@@ -49,34 +49,34 @@ function Get-RecycleBinAnalysis {
 
 function Invoke-RecycleBinCleanup {
 
-    Write-Log "A limpar Reciclagem..." "INFO"
+    Write-Log "Cleaning Recycle Bin..." "INFO"
 
     #
-    # Primeira tentativa
+    # First attempt
     #
 
     try {
 
         Clear-RecycleBin -Force -ErrorAction Stop
 
-        Write-Log "Reciclagem limpa com Clear-RecycleBin." "OK"
+        Write-Log "Recycle Bin cleared with Clear-RecycleBin." "OK"
 
         return
 
     }
     catch {
 
-        Write-Log "Clear-RecycleBin falhou. A tentar limpeza manual..." "WARNING"
+        Write-Log "Clear-RecycleBin failed. Trying manual cleanup..." "WARNING"
 
     }
 
     #
-    # Segunda tentativa
+    # Second attempt
     #
-    # Mantemos a limpeza da reciclagem apenas no percurso mais seguro.
-    # Não é necessário tocar em outras áreas do sistema.
+    # We keep Recycle Bin cleanup only on the safest path.
+    # No need to touch other system areas.
 
-    Write-Log "Limpeza manual da Reciclagem concluída." "OK"
+    Write-Log "Manual Recycle Bin cleanup completed." "OK"
 
 }
 

@@ -1,18 +1,18 @@
-#=========================================================
+﻿#=========================================================
 # ReportEngine.psm1
-# Motor do Relatório HTML
+# HTML Report Engine
 #=========================================================
 
 function Start-Report {
 
-    Show-Header "RELATÓRIO DO SISTEMA"
+    Show-Header "SYSTEM REPORT"
 
-    Write-Log "A gerar relatório HTML..." "INFO"
+    Write-Log "Generating HTML report..." "INFO"
 
     $Watch = Start-Stopwatch
 
     #
-    # Criar conteúdo HTML
+    # Create HTML content
     #
 
     $Html = @()
@@ -32,7 +32,7 @@ function Start-Report {
     $Html += Get-HTMLFooter
 
     #
-    # Guardar
+    # Save report
     #
 
     $File = Save-HTMLReport $Html
@@ -40,16 +40,16 @@ function Start-Report {
     $Elapsed = Stop-Stopwatch $Watch
 
     Write-Host ""
-    Write-Success "Relatório criado."
+    Write-Success "Report created."
 
-    Write-Host ("Ficheiro : {0}" -f $File)
+    Write-Host ("File    : {0}" -f $File)
 
-    Write-Host ("Tempo    : {0}" -f (Format-Time $Elapsed))
+    Write-Host ("Time    : {0}" -f (Format-Time $Elapsed))
 
     Write-Host ""
 
     #
-    # Abrir automaticamente
+    # Open automatically
     #
 
     if(Test-Path $File){
@@ -58,7 +58,7 @@ function Start-Report {
 
     }
 
-    Write-Log "Relatório HTML criado." "OK"
+    Write-Log "HTML report created." "OK"
 
     Pause-App
 

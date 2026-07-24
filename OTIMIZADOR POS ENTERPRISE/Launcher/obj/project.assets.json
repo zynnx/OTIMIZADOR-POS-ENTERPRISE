@@ -83,11 +83,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\TI_03\\Desktop\\OTIMIZADOR POS ENTERPRISE\\Launcher\\Launcher.csproj",
+      "projectUniqueName": "C:\\Users\\TI_03\\Documents\\GitHub\\OTIMIZADOR-POS-ENTERPRISE\\OTIMIZADOR POS ENTERPRISE\\Launcher\\Launcher.csproj",
       "projectName": "Otimizador_POS",
-      "projectPath": "C:\\Users\\TI_03\\Desktop\\OTIMIZADOR POS ENTERPRISE\\Launcher\\Launcher.csproj",
+      "projectPath": "C:\\Users\\TI_03\\Documents\\GitHub\\OTIMIZADOR-POS-ENTERPRISE\\OTIMIZADOR POS ENTERPRISE\\Launcher\\Launcher.csproj",
       "packagesPath": "C:\\Users\\TI_03\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\TI_03\\Desktop\\OTIMIZADOR POS ENTERPRISE\\Launcher\\obj\\",
+      "outputPath": "C:\\Users\\TI_03\\Documents\\GitHub\\OTIMIZADOR-POS-ENTERPRISE\\OTIMIZADOR POS ENTERPRISE\\Launcher\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

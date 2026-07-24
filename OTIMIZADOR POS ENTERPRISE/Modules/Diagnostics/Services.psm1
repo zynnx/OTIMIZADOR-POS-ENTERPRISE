@@ -1,13 +1,13 @@
-#=========================================================
+﻿#=========================================================
 # Services.psm1
-# Diagnóstico de Serviços
+# Services Diagnostic
 #=========================================================
 
 function Get-ServicesDiagnostic {
 
     return [PSCustomObject]@{
 
-        Name = "Serviços"
+        Name = "Services"
 
         DiagnosticFunction = "Invoke-ServicesDiagnostic"
 
@@ -20,7 +20,7 @@ function Get-ServicesDiagnostic {
 function Invoke-ServicesDiagnostic {
 
     #
-    # Serviços críticos do Windows
+    # Critical Windows services
     #
 
     $Services = @(
@@ -49,7 +49,7 @@ function Invoke-ServicesDiagnostic {
         }
         catch{
 
-            $Stopped += "$Name (Não encontrado)"
+            $Stopped += "$Name (Not found)"
 
         }
 
@@ -59,13 +59,13 @@ function Invoke-ServicesDiagnostic {
 
         return [PSCustomObject]@{
 
-            Name = "Serviços"
+            Name = "Services"
 
             Status = "OK"
 
             Score = 100
 
-            Details = "Todos os serviços críticos estão ativos."
+            Details = "All critical services are active."
 
             Recommendation = ""
 
@@ -75,18 +75,21 @@ function Invoke-ServicesDiagnostic {
 
     return [PSCustomObject]@{
 
-        Name = "Serviços"
+        Name = "Services"
 
-        Status = "ATENÇÃO"
+        Status = "WARNING"
 
         Score = 70
 
-        Details = "Parados: $($Stopped -join ', ')"
+        Details = "Stopped: $($Stopped -join ', ')"
 
-        Recommendation = "Verificar os serviços do Windows."
+        Recommendation = "Please start the missing services or review service health."
 
     }
 
 }
 
 Export-ModuleMember -Function *
+
+
+

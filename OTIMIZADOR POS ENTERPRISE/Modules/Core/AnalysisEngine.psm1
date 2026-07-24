@@ -1,30 +1,30 @@
-#=========================================================
+﻿#=========================================================
 # AnalysisEngine.psm1
-# Motor da Analise Completa
+# Complete Analysis Engine
 #=========================================================
 
 function Start-CompleteAnalysis {
 
     Show-Header
 
-    Write-Log "Inicio da Analise Completa." "OK"
+    Write-Log "Starting complete analysis." "OK"
 
     Write-Host ""
-    Write-Host "Iniciando Analise Completa..." -ForegroundColor Cyan
+    Write-Host "Starting complete analysis..." -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "A executar Limpeza Inteligente..." -ForegroundColor Yellow
+    Write-Host "Executing Smart Cleaning..." -ForegroundColor Yellow
     Write-Host ""
 
     Start-Cleaning
 
     Write-Host ""
-    Write-Host "A executar Otimizacao Windows..." -ForegroundColor Yellow
+    Write-Host "Executing Windows Optimization..." -ForegroundColor Yellow
     Write-Host ""
 
     Start-Optimization
 
     Write-Host ""
-    Write-Host "Analise completa concluida." -ForegroundColor Green
+    Write-Host "Complete analysis finished." -ForegroundColor Green
     Write-Host ""
 
     Pause-App
@@ -32,3 +32,4 @@ function Start-CompleteAnalysis {
 }
 
 Export-ModuleMember -Function *
+

@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # WindowsUpdate.psm1
-# Reparação do Windows Update
+# Windows Update repair
 #=========================================================
 
 function Get-WindowsUpdateRepairStatus {
@@ -9,7 +9,7 @@ function Get-WindowsUpdateRepairStatus {
 
         Name = "Windows Update"
 
-        Status = "Pronto"
+        Status = "Ready"
 
         RepairFunction = "Invoke-WindowsUpdateRepair"
 
@@ -34,12 +34,12 @@ function Stop-ServiceSafe {
 
         }
 
-        Write-Log "$Name parado." "OK"
+        Write-Log "$Name stopped." "OK"
 
     }
     catch {
 
-        Write-Log "Serviço $Name já estava parado ou não existe." "WARNING"
+        Write-Log "Service $Name was already stopped or does not exist." "WARNING"
 
     }
 
@@ -61,12 +61,12 @@ function Start-ServiceSafe {
 
         }
 
-        Write-Log "$Name iniciado." "OK"
+        Write-Log "$Name started." "OK"
 
     }
     catch {
 
-        Write-Log "Serviço $Name não pôde ser iniciado." "WARNING"
+        Write-Log "Service $Name could not be started." "WARNING"
 
     }
 
@@ -76,7 +76,7 @@ function Start-ServiceSafe {
 
 function Invoke-WindowsUpdateRepair {
 
-    Write-Log "A reparar Windows Update..." "INFO"
+    Write-Log "Repairing Windows Update..." "INFO"
 
     $Services = @(
         "wuauserv",
@@ -86,7 +86,7 @@ function Invoke-WindowsUpdateRepair {
     )
 
     #
-    # Parar serviços com controlo seguro
+    # Stop services with safe control
     #
 
     foreach($Service in $Services){
@@ -96,7 +96,7 @@ function Invoke-WindowsUpdateRepair {
     }
 
     #
-    # Limpar apenas os diretórios de cache do Windows Update
+    # Clean only Windows Update cache directories
     #
 
     $SD = Join-Path $env:SystemRoot "SoftwareDistribution"
@@ -112,12 +112,12 @@ function Invoke-WindowsUpdateRepair {
                 Get-ChildItem -Path $Path -Force -ErrorAction Stop |
                     Remove-Item -Recurse -Force -ErrorAction Stop
 
-                Write-Log "Cache limpa em $Path." "OK"
+                Write-Log "Cache cleared in $Path." "OK"
 
             }
             catch {
 
-                Write-Log "Não foi possível limpar $Path." "WARNING"
+                Write-Log "Could not clear $Path." "WARNING"
 
             }
 
@@ -138,19 +138,19 @@ function Invoke-WindowsUpdateRepair {
             Get-ChildItem -Path $Catroot -Force -ErrorAction Stop |
                 Remove-Item -Recurse -Force -ErrorAction Stop
 
-            Write-Log "Catroot2 limpa." "OK"
+            Write-Log "Catroot2 cleared." "OK"
 
         }
         catch{
 
-            Write-Log "Não foi possível limpar Catroot2." "WARNING"
+            Write-Log "Could not clear Catroot2." "WARNING"
 
         }
 
     }
 
     #
-    # Reiniciar serviços com controlo seguro
+    # Restart services with safe control
     #
 
     foreach($Service in $Services){
@@ -159,8 +159,13 @@ function Invoke-WindowsUpdateRepair {
 
     }
 
-    Write-Log "Reparação do Windows Update concluída." "OK"
+    Write-Log "Windows Update repair completed." "OK"
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+

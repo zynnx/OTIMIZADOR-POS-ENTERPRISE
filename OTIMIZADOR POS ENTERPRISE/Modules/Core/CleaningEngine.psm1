@@ -1,49 +1,21 @@
-#=========================================================
+﻿#=========================================================
 # CleaningEngine.psm1
-# Motor da Limpeza Inteligente
+# Smart Cleaning Engine
 #=========================================================
 
 #=========================================================
-# Descobrir módulos de limpeza
+# Discover cleaning modules
 #=========================================================
 
 function Get-CleaningItems {
-
-    $Items = @()
-
-    if (Get-Command Get-TempAnalysis -ErrorAction SilentlyContinue) {
-        $Items += Get-TempAnalysis
-    }
-
-    if (Get-Command Get-WindowsTempAnalysis -ErrorAction SilentlyContinue) {
-        $Items += Get-WindowsTempAnalysis
-    }
-
-    if (Get-Command Get-RecycleBinAnalysis -ErrorAction SilentlyContinue) {
-        $Items += Get-RecycleBinAnalysis
-    }
-
-    if (Get-Command Get-WindowsUpdateAnalysis -ErrorAction SilentlyContinue) {
-        $Items += Get-WindowsUpdateAnalysis
-    }
-
-    if (Get-Command Get-DeliveryOptimizationAnalysis -ErrorAction SilentlyContinue) {
-        $Items += Get-DeliveryOptimizationAnalysis
-    }
-
-    if (Get-Command Get-ThumbnailCacheAnalysis -ErrorAction SilentlyContinue) {
-        $Items += Get-ThumbnailCacheAnalysis
-    }
-
-    return $Items
-
-}
+    return Get-ModuleItems -SubFolder "Cleaning" -FunctionPattern "Get-*Analysis"
+} 
 
 function Start-Cleaning {
 
-    Show-Header "LIMPEZA INTELIGENTE"
+    Show-Header "SMART CLEANING"
 
-    Write-Log "Início da Limpeza Inteligente."
+    Write-Log "Starting Smart Cleaning."
 
     $Watch = Start-Stopwatch
 
@@ -51,7 +23,7 @@ function Start-Cleaning {
 
     if ($Items.Count -eq 0) {
 
-        Write-WarningMessage "Nenhum módulo de limpeza encontrado."
+        Write-WarningMessage "No cleaning modules found."
         Pause-App
         return
 
@@ -59,14 +31,14 @@ function Start-Cleaning {
 
     $TotalBefore = 0
 
-    Write-Host "A analisar..." -ForegroundColor Cyan
+    Write-Host "Analyzing..." -ForegroundColor Cyan
     Write-Host ""
 
     foreach ($Item in $Items) {
 
         $TotalBefore += $Item.Size
 
-        Write-Host ("{0,-25} {1,10} ficheiros {2,12}" -f `
+        Write-Host ("{0,-25} {1,10} files {2,12}" -f `
             $Item.Name,
             $Item.Files,
             $Item.SizeText)
@@ -74,7 +46,7 @@ function Start-Cleaning {
     }
 
     Write-Host ""
-    Write-Host ("Total encontrado : {0}" -f (Convert-Bytes $TotalBefore)) -ForegroundColor Yellow
+    Write-Host ("Total found : {0}" -f (Convert-Bytes $TotalBefore)) -ForegroundColor Yellow
     Write-Host ""
 
     $Ok = 0
@@ -87,7 +59,7 @@ function Start-Cleaning {
         $Current++
 
         Show-ProgressSimple `
-            -Activity "Limpeza Inteligente" `
+            -Activity "Smart Cleaning" `
             -Current $Current `
             -Total $Items.Count
 
@@ -97,7 +69,7 @@ function Start-Cleaning {
 
             Write-Success $Item.Name
 
-            Write-Log "$($Item.Name) limpo." "OK"
+            Write-Log "$($Item.Name) cleaned." "OK"
 
             $Ok++
 
@@ -114,14 +86,14 @@ function Start-Cleaning {
 
     }
 
-    Write-Progress -Activity "Limpeza Inteligente" -Completed
+    Write-Progress -Activity "Smart Cleaning" -Completed
 
     #
-    # NOVA ANÁLISE
+    # NEW ANALYSIS
     #
 
     Write-Host ""
-    Write-Host "A verificar espaço recuperado..." -ForegroundColor Cyan
+    Write-Host "Checking recovered space..." -ForegroundColor Cyan
     Write-Host ""
 
     $AfterItems = Get-CleaningItems
@@ -160,15 +132,15 @@ function Start-Cleaning {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host ("Itens analisados : {0}" -f $Items.Count)
-    Write-Host ("Limpezas OK      : {0}" -f $Ok)
-    Write-Host ("Erros            : {0}" -f $Erro)
-    Write-Host ("Espaço recuperado: {0}" -f (Convert-Bytes $RecoveredTotal))
+    Write-Host ("Items analyzed : {0}" -f $Items.Count)
+    Write-Host ("Cleanups OK      : {0}" -f $Ok)
+    Write-Host ("Errors            : {0}" -f $Erro)
+    Write-Host ("Space recovered: {0}" -f (Convert-Bytes $RecoveredTotal))
     Write-Host ("Tempo            : {0}" -f (Format-Time $Elapsed))
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
 
-    Write-Log ("Espaço recuperado: {0}" -f (Convert-Bytes $RecoveredTotal)) "OK"
+    Write-Log ("Space recovered: {0}" -f (Convert-Bytes $RecoveredTotal)) "OK"
 
     Pause-App
 

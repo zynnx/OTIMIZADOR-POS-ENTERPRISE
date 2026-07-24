@@ -1,54 +1,19 @@
-#=========================================================
+﻿#=========================================================
 # DiagnosticEngine.psm1
-# Motor de Diagnóstico
+# Diagnostic Engine
 #=========================================================
 
 function Get-DiagnosticItems {
-
-    $Items = @()
-
-    if (Get-Command Get-DiskDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-DiskDiagnostic
-    }
-
-    if (Get-Command Get-SmartDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-SmartDiagnostic
-    }
-
-    if (Get-Command Get-RAMDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-RAMDiagnostic
-    }
-
-    if (Get-Command Get-CPUDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-CPUDiagnostic
-    }
-
-    if (Get-Command Get-WindowsDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-WindowsDiagnostic
-    }
-
-    if (Get-Command Get-DefenderDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-DefenderDiagnostic
-    }
-
-    if (Get-Command Get-FirewallDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-FirewallDiagnostic
-    }
-
-    if (Get-Command Get-ServicesDiagnostic -ErrorAction SilentlyContinue) {
-        $Items += Get-ServicesDiagnostic
-    }
-
-    return $Items
+    return Get-ModuleItems -SubFolder "Diagnostics" -FunctionPattern "Get-*Diagnostic"
 }
 
 #---------------------------------------------------------
 
 function Start-Diagnostic {
 
-    Show-Header "DIAGNOSTICO DO SISTEMA"
+    Show-Header "SYSTEM DIAGNOSTIC"
 
-    Write-Log "Inicio do diagnostico." "INFO"
+    Write-Log "Starting diagnostic." "INFO"
 
     $Watch = Start-Stopwatch
 
@@ -56,7 +21,7 @@ function Start-Diagnostic {
 
     if ($Items.Count -eq 0) {
 
-        Write-WarningMessage "Nenhum modulo de diagnostico encontrado."
+        Write-WarningMessage "No diagnostic module found."
 
         Pause-App
 
@@ -73,40 +38,47 @@ function Start-Diagnostic {
         $Current++
 
         Show-ProgressSimple `
-            -Activity "Diagnóstico" `
+            -Activity "Diagnostics" `
             -Current $Current `
             -Total $Items.Count
 
         try {
 
-            $Results += & $Item.DiagnosticFunction
+            if (-not $Item.DiagnosticFunction) {
+                throw "Item '$($Item.Name)' não tem DiagnosticFunction definida."
+            }
+
+            $Function = Get-Command $Item.DiagnosticFunction -CommandType Function -ErrorAction Stop
+
+            $Results += & $Function
 
         }
         catch {
 
             $Results += [PSCustomObject]@{
 
-                Name = $Item.Name
-                Status = "ERRO"
-                Score = 0
-                Details = $_.Exception.Message
+                Name           = $Item.Name
+                Status         = "ERROR"
+                Score          = 0
+                Details        = $_.Exception.Message
                 Recommendation = ""
 
             }
 
         }
-
     }
 
-    Write-Progress -Activity "Diagnóstico" -Completed
+    
+
+    Write-Progress -Activity "Diagnostics" -Completed
 
     #
-    # Calcular pontuação
+    # Calculate score
     #
 
     $Score = 0
 
-    foreach($Result in $Results){
+    foreach ($Result in $Results) {
 
         $Score += $Result.Score
 
@@ -120,15 +92,15 @@ function Start-Diagnostic {
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
-    Write-Host "RESULTADOS"
+    Write-Host "RESULTS"
     Write-Host "============================================================"
     Write-Host ""
 
-    foreach($Result in $Results){
+    foreach ($Result in $Results) {
 
-        Write-Host ("{0,-25} {1}" -f $Result.Name,$Result.Status)
+        Write-Host ("{0,-25} {1}" -f $Result.Name, $Result.Status)
 
-        if($Result.Details){
+        if ($Result.Details) {
 
             Write-Host ("   {0}" -f $Result.Details) -ForegroundColor DarkGray
 
@@ -139,54 +111,54 @@ function Start-Diagnostic {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
 
-    Write-Host ("Pontuacao : {0}/100" -f $FinalScore)
+    Write-Host ("Score : {0}/100" -f $FinalScore)
 
     switch ($FinalScore) {
 
-        {$_ -ge 95} {
+        { $_ -ge 95 } {
 
-            $State = "EXCELENTE"
-
-        }
-
-        {$_ -ge 80} {
-
-            $State = "BOM"
+            $State = "EXCELLENT"
 
         }
 
-        {$_ -ge 60} {
+        { $_ -ge 80 } {
 
-            $State = "ATENÇÃO"
+            $State = "GOOD"
+
+        }
+
+        { $_ -ge 60 } {
+
+            $State = "WARNING"
 
         }
 
         default {
 
-            $State = "CRÍTICO"
+            $State = "CRITICAL"
 
         }
 
     }
 
-    Write-Host ("Estado     : {0}" -f $State)
+    Write-Host ("Status     : {0}" -f $State)
 
     #
-    # Recomendações
+    # Recommendations
     #
 
     $Recommendations = $Results |
-        Where-Object {
-            $_.Recommendation -ne ""
-        }
+    Where-Object {
+        $_.Recommendation -ne ""
+    }
 
-    if($Recommendations.Count -gt 0){
+    if ($Recommendations.Count -gt 0) {
 
         Write-Host ""
-        Write-Host "Recomendacoes:" -ForegroundColor Yellow
+        Write-Host "Recommendations:" -ForegroundColor Yellow
         Write-Host ""
 
-        foreach($Item in $Recommendations){
+        foreach ($Item in $Recommendations) {
 
             Write-Host ("- {0}" -f $Item.Recommendation)
 
@@ -197,21 +169,20 @@ function Start-Diagnostic {
     $Elapsed = Stop-Stopwatch $Watch
 
     Write-Host ""
-    Write-Host ("Tempo : {0}" -f (Format-Time $Elapsed))
+    Write-Host ("Time : {0}" -f (Format-Time $Elapsed))
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
 
-    Write-Log "Diagnostico concluido." "OK"
+    Write-Log "Diagnostic completed." "OK"
+
+    $Global:App.Results.Diagnostic = [PSCustomObject]@{
+        Date    = Get-Date
+        Score   = $FinalScore
+        Results = $Results
+    }
 
     Pause-App
-
-}
-
-$Global:App.Results.Diagnostic = [PSCustomObject]@{
-    Date = Get-Date
-    Score = $FinalScore
-    Results = $Results
 }
 
 Export-ModuleMember -Function *

@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # HTML.psm1
-# Estrutura base do relatório HTML
+# Base HTML report structure
 #=========================================================
 
 function Get-HTMLHeader {
@@ -105,7 +105,7 @@ th{
 
 <h1>OTIMIZADOR POS ENTERPRISE</h1>
 
-<p>Relatório gerado em: $(Get-Date -Format "dd/MM/yyyy HH:mm:ss")</p>
+<p>Report generated on: $(Get-Date -Format "dd/MM/yyyy HH:mm:ss")</p>
 
 <hr>
 
@@ -138,3 +138,4 @@ OTIMIZADOR POS ENTERPRISE v$($Global:App.Version)
 }
 
 Export-ModuleMember -Function *
+

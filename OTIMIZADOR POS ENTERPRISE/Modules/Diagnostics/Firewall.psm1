@@ -1,6 +1,6 @@
 #=========================================================
 # Firewall.psm1
-# Diagnóstico do Firewall
+# Firewall Diagnostic
 #=========================================================
 
 function Get-FirewallDiagnostic {
@@ -37,10 +37,10 @@ function Invoke-FirewallDiagnostic {
 
             $Names = ($Disabled.Name -join ", ")
 
-            $Status = "ATENÇÃO"
+            $Status = "WARNING"
             $Score = 80
-            $Details = "Perfis desativados: $Names"
-            $Recommendation = "Verificar a configuração da Firewall."
+            $Details = "Disabled profiles: $Names"
+            $Recommendation = "Check the firewall configuration."
 
         }
 
@@ -60,10 +60,10 @@ function Invoke-FirewallDiagnostic {
         return [PSCustomObject]@{
 
             Name = "Firewall"
-            Status = "ERRO"
+            Status = "ERROR"
             Score = 50
-            Details = "Não foi possível verificar a Firewall."
-            Recommendation = "Verificar o serviço da Firewall."
+            Details = "Unable to verify the firewall."
+            Recommendation = "Check the firewall service."
 
         }
 

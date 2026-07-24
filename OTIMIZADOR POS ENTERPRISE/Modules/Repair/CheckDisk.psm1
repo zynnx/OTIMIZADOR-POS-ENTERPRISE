@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # CheckDisk.psm1
-# Verificação do Disco
+# Disk check
 #=========================================================
 
 function Get-CheckDiskStatus {
@@ -9,9 +9,7 @@ function Get-CheckDiskStatus {
 
         Name = "CHKDSK"
 
-        Status = "Pronto"
-
-        RepairFunction = "Invoke-CheckDiskRepair"
+        Status = "Ready"
 
     }
 
@@ -21,10 +19,10 @@ function Get-CheckDiskStatus {
 
 function Invoke-CheckDiskRepair {
 
-    Write-Log "A executar CHKDSK..." "INFO"
+    Write-Log "Executing CHKDSK..." "INFO"
 
     Write-Host ""
-    Write-Host "A verificar o disco C:..." -ForegroundColor Yellow
+    Write-Host "Checking disk C:..." -ForegroundColor Yellow
     Write-Host ""
 
     $Arguments = @(
@@ -41,15 +39,19 @@ function Invoke-CheckDiskRepair {
 
     if($Process.ExitCode -eq 0){
 
-        Write-Log "CHKDSK concluído com sucesso." "OK"
+        Write-Log "CHKDSK completed successfully." "OK"
 
     }
     else{
 
-        throw "CHKDSK terminou com o código $($Process.ExitCode)."
+        throw "CHKDSK finished with exit code $($Process.ExitCode)."
 
     }
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+

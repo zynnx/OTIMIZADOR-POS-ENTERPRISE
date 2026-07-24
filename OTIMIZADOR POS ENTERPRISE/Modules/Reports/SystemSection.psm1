@@ -1,4 +1,4 @@
-#=========================================================
+﻿#=========================================================
 # SystemSection.psm1
 #=========================================================
 
@@ -14,7 +14,7 @@ function Get-SystemSection {
 
 <tr><th>Campo</th><th>Valor</th></tr>
 
-<tr><td>Computador</td><td>$($Info.ComputerName)</td></tr>
+<tr><td>Computer</td><td>$($Info.ComputerName)</td></tr>
 
 <tr><td>Windows</td><td>$($Info.Windows)</td></tr>
 
@@ -24,7 +24,7 @@ function Get-SystemSection {
 
 <tr><td>RAM</td><td>$($Info.RAM) GB</td></tr>
 
-<tr><td>Disco Livre</td><td>$($Info.DiskFree) GB</td></tr>
+<tr><td>Free Disk</td><td>$($Info.DiskFree) GB</td></tr>
 
 <tr><td>Uptime</td><td>$($Info.Uptime)</td></tr>
 

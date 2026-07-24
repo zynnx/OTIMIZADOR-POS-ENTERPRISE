@@ -1,11 +1,11 @@
-#=========================================================
+﻿#=========================================================
 # PowerPlan.psm1
-# Plano de Energia
+# Power Plan
 #=========================================================
 
 function Get-PowerPlanStatus {
 
-    $Status = "Desconhecido"
+    $Status = "Unknown"
 
     try {
 
@@ -17,12 +17,12 @@ function Get-PowerPlanStatus {
 
             if ($Current -match "High performance|Alto desempenho") {
 
-                $Status = "Otimizado"
+                $Status = "Optimized"
 
             }
             else {
 
-                $Status = "Não otimizado"
+                $Status = "Not optimized"
 
             }
 
@@ -31,13 +31,13 @@ function Get-PowerPlanStatus {
     }
     catch {
 
-        $Status = "Erro"
+        $Status = "ERROR"
 
     }
 
     return [PSCustomObject]@{
 
-        Name = "Plano de Energia"
+        Name = "Power Plan"
 
         Status = $Status
 
@@ -51,12 +51,12 @@ function Get-PowerPlanStatus {
 
 function Invoke-PowerPlanOptimization {
 
-    Write-Log "A verificar planos de energia..." "INFO"
+    Write-Log "Checking power plans..." "INFO"
 
     $Plans = powercfg /L
 
     #
-    # Procura Alto Desempenho
+    # Search for High Performance
     #
 
     $High = $Plans | Where-Object {
@@ -67,9 +67,9 @@ function Invoke-PowerPlanOptimization {
 
     if (-not $High) {
 
-        Write-Log "Plano Alto Desempenho não encontrado." "WARNING"
+        Write-Log "High Performance plan not found." "WARNING"
 
-        Write-Log "A criar plano Alto Desempenho..." "INFO"
+        Write-Log "Creating High Performance plan..." "INFO"
 
         powercfg -duplicatescheme SCHEME_MIN | Out-Null
 
@@ -91,17 +91,24 @@ function Invoke-PowerPlanOptimization {
 
             powercfg /S $Guid
 
-            Write-Log "Plano Alto Desempenho ativado." "OK"
+            Write-Log "High Performance plan activated." "OK"
 
         }
 
     }
     else {
 
-        Write-Log "Não foi possível ativar o plano." "ERROR"
+        Write-Log "Could not activate the plan." "ERROR"
 
     }
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+
+

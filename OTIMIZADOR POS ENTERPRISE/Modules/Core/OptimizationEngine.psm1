@@ -1,9 +1,36 @@
-#=========================================================
+﻿#=========================================================
 # OptimizationEngine.psm1
-# Motor de Otimização do Windows
+# Windows Optimization Engine
 #=========================================================
 
 function Get-OptimizationItems {
+    return Get-ModuleItems -SubFolder "Optimization" -FunctionPattern "Get-*Status"
+}
+
+<# function Get-OptimizationItems {
+
+    param(
+        [string]$ModulesPath = "$PSScriptRoot\..\Optimization"
+    )
+
+    $Items = @()
+    $ImportedModuleNames = @()
+
+    Get-ChildItem -Path $ModulesPath -Filter "*.psm1" -File | ForEach-Object {
+        $Module = Import-Module $_.FullName -Force -PassThru
+        $ImportedModuleNames += $Module.Name
+    }
+
+    $StatusFunctions = Get-Command -CommandType Function -Name "Get-*Status" -Module $ImportedModuleNames -ErrorAction SilentlyContinue
+
+    foreach ($func in $StatusFunctions) {
+        $Items += & $func.Name
+    }
+
+    return $Items
+} #>
+
+<# function Get-OptimizationItems {
 
     $Items = @()
 
@@ -33,15 +60,15 @@ function Get-OptimizationItems {
 
     return $Items
 
-}
+} #>
 
 #---------------------------------------------------------
 
 function Start-Optimization {
 
-    Show-Header "OTIMIZAÇÃO DO WINDOWS"
+    Show-Header "WINDOWS OPTIMIZATION"
 
-    Write-Log "Início da Otimização do Windows."
+    Write-Log "Starting Windows Optimization."
 
     $Watch = Start-Stopwatch
 
@@ -49,7 +76,7 @@ function Start-Optimization {
 
     if ($Items.Count -eq 0) {
 
-        Write-WarningMessage "Nenhum módulo de otimização encontrado."
+        Write-WarningMessage "No optimization modules found."
 
         Pause-App
 
@@ -57,7 +84,7 @@ function Start-Optimization {
 
     }
 
-    Write-Host "Estado atual do sistema" -ForegroundColor Cyan
+    Write-Host "Current system status" -ForegroundColor Cyan
     Write-Host ""
 
     foreach($Item in $Items){
@@ -67,7 +94,7 @@ function Start-Optimization {
     }
 
     Write-Host ""
-    Write-Host "A iniciar otimização..." -ForegroundColor Cyan
+    Write-Host "Starting optimization..." -ForegroundColor Cyan
     Write-Host ""
 
     $OK = 0
@@ -79,7 +106,7 @@ function Start-Optimization {
         $Current++
 
         Show-ProgressSimple `
-            -Activity "Otimização do Windows" `
+            -Activity "Windows Optimization" `
             -Current $Current `
             -Total $Items.Count
 
@@ -87,9 +114,9 @@ function Start-Optimization {
 
             & $Item.OptimizeFunction
 
-            Write-Success ("{0} concluído." -f $Item.Name)
+            Write-Success ("{0} completed." -f $Item.Name)
 
-            Write-Log "$($Item.Name) otimizado." "OK"
+            Write-Log "$($Item.Name) optimized." "OK"
 
             $OK++
 
@@ -107,7 +134,7 @@ function Start-Optimization {
     }
 
     Write-Progress `
-        -Activity "Otimização do Windows" `
+        -Activity "Windows Optimization" `
         -Completed
 
     $Elapsed = Stop-Stopwatch $Watch
@@ -116,15 +143,15 @@ function Start-Optimization {
     Write-Host "============================================================" -ForegroundColor Cyan
     Write-Host ""
 
-    Write-Host ("Módulos executados : {0}" -f $Items.Count)
-    Write-Host ("Com sucesso        : {0}" -f $OK)
-    Write-Host ("Erros              : {0}" -f $Erro)
-    Write-Host ("Tempo              : {0}" -f (Format-Time $Elapsed))
+    Write-Host ("Modules executed : {0}" -f $Items.Count)
+    Write-Host ("Succeeded        : {0}" -f $OK)
+    Write-Host ("Errors              : {0}" -f $Erro)
+    Write-Host ("Time               : {0}" -f (Format-Time $Elapsed))
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
 
-    Write-Log "Otimização concluída." "OK"
+    Write-Log "Optimization completed." "OK"
 
     Pause-App
 
@@ -136,3 +163,11 @@ $Global:App.Results.Optimization = [PSCustomObject]@{
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+
+
+

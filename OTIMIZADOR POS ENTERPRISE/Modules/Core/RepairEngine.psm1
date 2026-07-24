@@ -1,16 +1,20 @@
-#=========================================================
+﻿#=========================================================
 # RepairEngine.psm1
-# Motor de Reparação Windows
+# Windows Repair Engine
 #=========================================================
 
 #---------------------------------------------------------
 
 function Get-RepairItems {
+    return Get-ModuleItems -SubFolder "Repair" -FunctionPattern "Get-*Status"
+}
+
+<# function Get-RepairItems {
 
     $Items = @()
 
     #
-    # Ordem fixa dos módulos
+    # Fixed module order
     #
 
     if (Get-Command Get-ComponentStoreStatus -ErrorAction SilentlyContinue) {
@@ -39,15 +43,15 @@ function Get-RepairItems {
 
     return $Items
 
-}
+} #>
 
 #---------------------------------------------------------
 
 function Start-Repair {
 
-    Show-Header "REPARAÇÃO DO WINDOWS"
+    Show-Header "WINDOWS REPAIR"
 
-    Write-Log "Início da Reparação do Windows."
+    Write-Log "Starting Windows Repair."
 
     $Watch = Start-Stopwatch
 
@@ -55,7 +59,7 @@ function Start-Repair {
 
     if ($Items.Count -eq 0){
 
-        Write-WarningMessage "Nenhum módulo de reparação encontrado."
+        Write-WarningMessage "No repair modules found."
 
         Pause-App
 
@@ -63,7 +67,7 @@ function Start-Repair {
 
     }
 
-    Write-Host "Módulos disponíveis:" -ForegroundColor Cyan
+    Write-Host "Available modules:" -ForegroundColor Cyan
     Write-Host ""
 
     foreach($Item in $Items){
@@ -73,7 +77,7 @@ function Start-Repair {
     }
 
     Write-Host ""
-    Write-Host "A iniciar reparação..." -ForegroundColor Cyan
+    Write-Host "Starting repair..." -ForegroundColor Cyan
     Write-Host ""
 
     $OK = 0
@@ -87,7 +91,7 @@ function Start-Repair {
         $Current++
 
         Show-ProgressSimple `
-            -Activity "Reparação do Windows" `
+            -Activity "Windows Repair" `
             -Current $Current `
             -Total $Items.Count
 
@@ -97,14 +101,14 @@ function Start-Repair {
 
             $Resultados += [PSCustomObject]@{
 
-                Nome = $Item.Name
-                Estado = "OK"
+                Name = $Item.Name
+                Status = "OK"
 
             }
 
-            Write-Success "$($Item.Name) concluído."
+            Write-Success "$($Item.Name) completed."
 
-            Write-Log "$($Item.Name) executado." "OK"
+            Write-Log "$($Item.Name) executed." "OK"
 
             $OK++
 
@@ -113,8 +117,8 @@ function Start-Repair {
 
             $Resultados += [PSCustomObject]@{
 
-                Nome = $Item.Name
-                Estado = "ERRO"
+                Name = $Item.Name
+                Status = "ERROR"
 
             }
 
@@ -129,14 +133,14 @@ function Start-Repair {
     }
 
     Write-Progress `
-        -Activity "Reparação do Windows" `
+        -Activity "Windows Repair" `
         -Completed
 
     $Elapsed = Stop-Stopwatch $Watch
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
-    Write-Host "                    RESUMO DA REPARAÇÃO"
+    Write-Host "                    REPAIR SUMMARY"
     Write-Host "============================================================"
     Write-Host ""
 
@@ -147,14 +151,14 @@ function Start-Repair {
     }
 
     Write-Host ""
-    Write-Host ("Reparações OK : {0}" -f $OK)
-    Write-Host ("Erros         : {0}" -f $Erro)
-    Write-Host ("Tempo         : {0}" -f (Format-Time $Elapsed))
+    Write-Host ("Repairs OK : {0}" -f $OK)
+    Write-Host ("Errors         : {0}" -f $Erro)
+    Write-Host ("Time         : {0}" -f (Format-Time $Elapsed))
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
 
-    Write-Log "Reparação concluída." "OK"
+    Write-Log "Repair completed." "OK"
 
     Pause-App
 
@@ -166,3 +170,16 @@ $Global:App.Results.Repair = [PSCustomObject]@{
     Errors = $Erro
 }
 Export-ModuleMember -Function *
+
+
+
+
+
+
+
+
+
+
+
+
+

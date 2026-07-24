@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # FileSystem.psm1
-# Funções de manipulação do sistema de ficheiros
+# File system helper functions
 #=========================================================
 
 function Test-Folder {

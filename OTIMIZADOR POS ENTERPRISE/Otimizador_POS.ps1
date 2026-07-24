@@ -1,10 +1,10 @@
-# ==========================================================
+﻿# ==========================================================
 # OTIMIZADOR POS ENTERPRISE
-# Autor: Seabra 
+# Author: Seabra
 # ==========================================================
 
 #-------------------------
-# Configurações Globais
+# Global configuration
 #-------------------------
 
 $ErrorActionPreference = "Stop"
@@ -27,7 +27,7 @@ $Global:App = @{
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 #-------------------------
-# Verificar Administrador
+# Check for administrator
 #-------------------------
 
 $Identity  = [Security.Principal.WindowsIdentity]::GetCurrent()
@@ -36,7 +36,7 @@ $Principal = New-Object Security.Principal.WindowsPrincipal($Identity)
 if (-not $Principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))
 {
     Write-Host ""
-    Write-Host "Este programa tem de ser executado como Administrador." -ForegroundColor Red
+    Write-Host "This program must be run as administrator." -ForegroundColor Red
     Write-Host ""
 
     Pause
@@ -44,7 +44,7 @@ if (-not $Principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administra
 }
 
 #-------------------------
-# Criar Pastas
+# Create folders
 #-------------------------
 
 $Folders = @(
@@ -65,7 +65,7 @@ foreach($Folder in $Folders)
 }
 
 #-------------------------
-# Carregar Configuração
+# Load configuration
 #-------------------------
 
 $ConfigFile = Join-Path $Global:AppRoot "Config\Config.json"
@@ -86,7 +86,7 @@ if(!(Test-Path $ConfigFile))
 $Global:Config = Get-Content $ConfigFile -Raw | ConvertFrom-Json
 
 #-------------------------
-# Carregar Módulos
+# Load modules
 #-------------------------
 
 $Modules = Get-ChildItem "$Global:AppRoot\Modules" -Filter *.psm1 -Recurse
@@ -97,11 +97,11 @@ foreach($Module in $Modules)
 }
 
 #-------------------------
-# Arrancar Programa
+# Start the program
 #-------------------------
 
 Start-Log
 
-Write-Log "Aplicação iniciada" "OK"
+Write-Log "Application started" "OK"
 
 Start-MainMenu

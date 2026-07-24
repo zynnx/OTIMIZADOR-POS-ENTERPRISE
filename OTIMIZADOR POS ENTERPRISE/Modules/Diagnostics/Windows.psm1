@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # Windows.psm1
-# Diagnóstico do Windows
+# Windows Diagnostic
 #=========================================================
 
 function Get-WindowsDiagnostic {
@@ -34,7 +34,7 @@ function Invoke-WindowsDiagnostic {
         $Version = $OS.Version
 
         #
-        # Classificação
+        # Classification
         #
 
         if($Days -lt 15){
@@ -46,16 +46,16 @@ function Invoke-WindowsDiagnostic {
         }
         elseif($Days -lt 30){
 
-            $Status = "ATENÇÃO"
+            $Status = "WARNING"
             $Score = 85
-            $Recommendation = "Recomenda-se reiniciar o computador."
+            $Recommendation = "It is recommended to restart the computer."
 
         }
         else{
 
-            $Status = "CRÍTICO"
+            $Status = "CRITICAL"
             $Score = 60
-            $Recommendation = "O computador está ligado há muitos dias. Reiniciar."
+            $Recommendation = "The computer has been on for many days. Restart."
 
         }
 
@@ -67,7 +67,7 @@ function Invoke-WindowsDiagnostic {
 
             Score = $Score
 
-            Details = "$Caption | Build $Build | Versão $Version | Uptime: $Days dias"
+            Details = "$Caption | Build $Build | Version $Version | Uptime: $Days days"
 
             Recommendation = $Recommendation
 
@@ -80,13 +80,13 @@ function Invoke-WindowsDiagnostic {
 
             Name = "Windows"
 
-            Status = "ERRO"
+            Status = "ERROR"
 
             Score = 0
 
             Details = $_.Exception.Message
 
-            Recommendation = "Verificar sistema operativo."
+            Recommendation = "Check operating system."
 
         }
 
@@ -95,3 +95,10 @@ function Invoke-WindowsDiagnostic {
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+
+

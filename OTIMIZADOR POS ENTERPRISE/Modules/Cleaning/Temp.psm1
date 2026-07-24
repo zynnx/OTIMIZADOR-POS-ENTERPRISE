@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # Temp.psm1
-# Limpeza da pasta TEMP do utilizador
+# User TEMP folder cleanup
 #=========================================================
 
 function Get-TempAnalysis {
@@ -10,7 +10,7 @@ function Get-TempAnalysis {
     if (!(Test-Folder $Path)) {
 
         return [PSCustomObject]@{
-            Name            = "TEMP Utilizador"
+            Name            = "User TEMP"
             Path            = $Path
             Size            = 0
             SizeText        = "0 Bytes"
@@ -25,7 +25,7 @@ function Get-TempAnalysis {
 
     return [PSCustomObject]@{
 
-        Name            = "TEMP Utilizador"
+        Name            = "User TEMP"
 
         Path            = $Path
 
@@ -49,12 +49,12 @@ function Invoke-TempCleanup {
 
     if (!(Test-Folder $Path)) {
 
-        Write-Log "Pasta TEMP não existe." "WARNING"
+        Write-Log "TEMP folder does not exist." "WARNING"
         return
 
     }
 
-    Write-Log "A limpar TEMP do utilizador..." "INFO"
+    Write-Log "Cleaning user TEMP..." "INFO"
 
     $Removed = 0
     $Errors  = 0
@@ -81,9 +81,7 @@ function Invoke-TempCleanup {
             }
             catch {
 
-                # Ignora ficheiros em utilização
-                $Errors++
-
+        # Ignore files in use
             }
 
         }
@@ -95,11 +93,11 @@ function Invoke-TempCleanup {
 
     }
 
-    Write-Log "Itens removidos: $Removed" "INFO"
+    Write-Log "Items removed: $Removed" "INFO"
 
     if ($Errors -gt 0) {
 
-        Write-Log "Itens ignorados (em utilização): $Errors" "WARNING"
+        Write-Log "Items ignored (in use): $Errors" "WARNING"
 
     }
 

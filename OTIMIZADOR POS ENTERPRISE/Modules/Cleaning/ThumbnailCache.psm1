@@ -1,6 +1,6 @@
 #=========================================================
 # ThumbnailCache.psm1
-# Limpeza da Cache de Miniaturas e Ícones
+# Thumbnail and icon cache cleanup
 #=========================================================
 
 function Get-ThumbnailCacheAnalysis {
@@ -68,13 +68,13 @@ function Invoke-ThumbnailCacheCleanup {
 
     if (!(Test-Folder $Path)) {
 
-        Write-Log "Cache de Miniaturas não encontrada." "WARNING"
+        Write-Log "Thumbnail cache not found." "WARNING"
 
         return
 
     }
 
-    Write-Log "A limpar Cache de Miniaturas..." "INFO"
+    Write-Log "Cleaning thumbnail cache..." "INFO"
 
     $Removed = 0
     $Errors = 0
@@ -125,7 +125,7 @@ function Invoke-ThumbnailCacheCleanup {
 
     if ($Errors -gt 0) {
 
-        Write-Log "Ficheiros ignorados: $Errors" "WARNING"
+        Write-Log "Files ignored: $Errors" "WARNING"
 
     }
 

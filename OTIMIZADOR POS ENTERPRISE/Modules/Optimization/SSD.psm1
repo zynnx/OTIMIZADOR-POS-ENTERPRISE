@@ -1,11 +1,11 @@
-#=========================================================
+﻿#=========================================================
 # SSD.psm1
-# Otimização para SSD
+# SSD Optimization
 #=========================================================
 
 function Get-SSDStatus {
 
-    $Status = "Não suportado"
+    $Status = "Not supported"
 
     try {
 
@@ -19,12 +19,12 @@ function Get-SSDStatus {
 
             if ($Trim -match "DisableDeleteNotify = 0") {
 
-                $Status = "Otimizado"
+                $Status = "Optimized"
 
             }
             else {
 
-                $Status = "TRIM desativado"
+                $Status = "TRIM disabled"
 
             }
 
@@ -33,7 +33,7 @@ function Get-SSDStatus {
     }
     catch {
 
-        $Status = "Desconhecido"
+        $Status = "Unknown"
 
     }
 
@@ -53,7 +53,7 @@ function Get-SSDStatus {
 
 function Invoke-SSDOptimization {
 
-    Write-Log "A verificar SSD..." "INFO"
+    Write-Log "Checking SSD..." "INFO"
 
     try {
 
@@ -63,7 +63,7 @@ function Invoke-SSDOptimization {
 
         if (-not $SSD) {
 
-            Write-Log "Não foi detetado nenhum SSD." "INFO"
+            Write-Log "No SSD detected." "INFO"
             return
 
         }
@@ -71,7 +71,7 @@ function Invoke-SSDOptimization {
     }
     catch {
 
-        Write-Log "Não foi possível determinar o tipo de disco." "WARNING"
+        Write-Log "Could not determine disk type." "WARNING"
         return
 
     }
@@ -100,10 +100,14 @@ function Invoke-SSDOptimization {
     }
     catch {
 
-        Write-Log "Não foi possível executar o ReTrim." "WARNING"
+        Write-Log "Could not execute ReTrim." "WARNING"
 
     }
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+

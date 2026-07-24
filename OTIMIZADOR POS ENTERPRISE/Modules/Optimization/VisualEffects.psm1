@@ -1,11 +1,11 @@
-#=========================================================
+﻿#=========================================================
 # VisualEffects.psm1
-# Otimização dos efeitos visuais
+# Visual Effects Optimization
 #=========================================================
 
 function Get-VisualEffectsStatus {
 
-    $Status = "Desconhecido"
+    $Status = "Unknown"
 
     try {
 
@@ -16,30 +16,30 @@ function Get-VisualEffectsStatus {
 
         if ($null -eq $Value) {
 
-            $Status = "Não configurado"
+            $Status = "Not configured"
 
         }
         elseif ($Value.VisualFXSetting -eq 2) {
 
-            $Status = "Otimizado"
+            $Status = "Optimized"
 
         }
         else {
 
-            $Status = "Não otimizado"
+            $Status = "Not optimized"
 
         }
 
     }
     catch {
 
-        $Status = "Desconhecido"
+        $Status = "Unknown"
 
     }
 
     return [PSCustomObject]@{
 
-        Name = "Efeitos Visuais"
+        Name = "Visual Effects"
 
         Status = $Status
 
@@ -53,10 +53,10 @@ function Get-VisualEffectsStatus {
 
 function Invoke-VisualEffectsOptimization {
 
-    Write-Log "A otimizar efeitos visuais..." "INFO"
+    Write-Log "Optimizing visual effects..." "INFO"
 
     #
-    # Ajustar para Melhor Desempenho
+    # Adjust for Better Performance
     #
 
     New-Item `
@@ -70,7 +70,7 @@ function Invoke-VisualEffectsOptimization {
         -Type DWord
 
     #
-    # Remover animações
+    # Remove animations
     #
 
     Set-ItemProperty `
@@ -79,7 +79,7 @@ function Invoke-VisualEffectsOptimization {
         -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00))
 
     #
-    # Menu mais rápido
+    # Faster menu
     #
 
     Set-ItemProperty `
@@ -88,7 +88,7 @@ function Invoke-VisualEffectsOptimization {
         -Value "0"
 
     #
-    # Não minimizar com animação
+    # Do not minimize with animation
     #
 
     Set-ItemProperty `
@@ -97,8 +97,19 @@ function Invoke-VisualEffectsOptimization {
         -Value "0" `
         -ErrorAction SilentlyContinue
 
-    Write-Log "Efeitos visuais otimizados." "OK"
+    Write-Log "Visual effects optimized." "OK"
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+
+
+
+
+
+

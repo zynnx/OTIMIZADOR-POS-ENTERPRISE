@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # CPU.psm1
-# Diagnóstico do Processador
+# CPU Diagnostic
 #=========================================================
 
 function Get-CPUDiagnostic {
@@ -34,7 +34,7 @@ function Invoke-CPUDiagnostic {
         $Speed = [math]::Round($CPU.MaxClockSpeed / 1000,2)
 
         #
-        # Classificação
+        # Classification
         #
 
         if($Load -lt 60){
@@ -46,23 +46,23 @@ function Invoke-CPUDiagnostic {
         }
         elseif($Load -lt 80){
 
-            $Status = "ATENÇÃO"
+            $Status = "WARNING"
             $Score = 90
-            $Recommendation = "Verificar aplicações em execução."
+            $Recommendation = "Check running applications."
 
         }
         elseif($Load -lt 95){
 
             $Status = "ELEVADA"
             $Score = 70
-            $Recommendation = "Analisar processos com utilização elevada."
+            $Recommendation = "Analyze high usage processes."
 
         }
         else{
 
-            $Status = "CRÍTICO"
+            $Status = "CRITICAL"
             $Score = 30
-            $Recommendation = "Verificar possível bloqueio ou sobrecarga do sistema."
+            $Recommendation = "Check for possible system lock or overload."
 
         }
 
@@ -87,13 +87,13 @@ function Invoke-CPUDiagnostic {
 
             Name = "CPU"
 
-            Status = "ERRO"
+            Status = "ERROR"
 
             Score = 0
 
             Details = $_.Exception.Message
 
-            Recommendation = "Verificar processador."
+            Recommendation = "Check processor."
 
         }
 
@@ -102,3 +102,9 @@ function Invoke-CPUDiagnostic {
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+

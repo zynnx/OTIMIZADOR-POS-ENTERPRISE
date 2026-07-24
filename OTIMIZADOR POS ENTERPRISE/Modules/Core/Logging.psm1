@@ -1,4 +1,4 @@
-#=========================================================
+﻿#=========================================================
 # Logging.psm1
 # Sistema de Logs
 #=========================================================
@@ -110,7 +110,7 @@ function Write-Section {
 function Stop-Log {
 
     Write-Log ""
-    Write-Log "Fim da execução."
+    Write-Log "Execution finished."
 
 }
 

@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # Store.psm1
-# Reparação da Microsoft Store
+# Microsoft Store repair
 #=========================================================
 
 function Get-StoreRepairStatus {
@@ -9,7 +9,7 @@ function Get-StoreRepairStatus {
 
         Name = "Microsoft Store"
 
-        Status = "Pronto"
+        Status = "Ready"
 
         RepairFunction = "Invoke-StoreRepair"
 
@@ -21,12 +21,12 @@ function Get-StoreRepairStatus {
 
 function Invoke-StoreRepair {
 
-    Write-Log "A reparar Microsoft Store..." "INFO"
+    Write-Log "Repairing Microsoft Store..." "INFO"
 
     try {
 
         #
-        # Limpar cache da Store
+        # Clear the Microsoft Store cache
         #
 
         Start-Process `
@@ -34,19 +34,19 @@ function Invoke-StoreRepair {
             -Wait `
             -NoNewWindow
 
-        Write-Log "Cache da Microsoft Store limpa." "OK"
+        Write-Log "Microsoft Store cache cleared." "OK"
 
     }
     catch {
 
-        throw "Não foi possível executar o WSReset."
+        throw "Could not execute WSReset."
 
     }
 
     try {
 
         #
-        # Re-registar a Microsoft Store
+        # Re-register the Microsoft Store
         #
 
         Get-AppxPackage -AllUsers Microsoft.WindowsStore |
@@ -58,17 +58,19 @@ function Invoke-StoreRepair {
 
         }
 
-        Write-Log "Microsoft Store registada novamente." "OK"
+        Write-Log "Microsoft Store re-registered." "OK"
 
     }
     catch {
 
-        Write-Log "Não foi possível re-registar a Microsoft Store." "WARNING"
+        Write-Log "Could not re-register Microsoft Store." "WARNING"
 
     }
 
-    Write-Log "Reparação da Microsoft Store concluída." "OK"
+    Write-Log "Microsoft Store repair completed." "OK"
 
 }
 
 Export-ModuleMember -Function *
+
+

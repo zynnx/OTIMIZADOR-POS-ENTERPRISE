@@ -1,6 +1,6 @@
-#=========================================================
+﻿#=========================================================
 # Utils.psm1
-# Funções auxiliares
+# Utility functions
 #=========================================================
 
 function Convert-Bytes {
@@ -74,7 +74,7 @@ function Write-WarningMessage {
 
     param([string]$Message)
 
-    Write-Host "[ AVISO ] $Message" -ForegroundColor Yellow
+    Write-Host "[ WARNING ] $Message" -ForegroundColor Yellow
 
 }
 
@@ -84,7 +84,7 @@ function Write-ErrorMessage {
 
     param([string]$Message)
 
-    Write-Host "[ ERRO ] $Message" -ForegroundColor Red
+    Write-Host "[ ERROR ] $Message" -ForegroundColor Red
 
 }
 
@@ -163,6 +163,41 @@ function Draw-Line {
 
     Write-Host ($Character.ToString() * $Length) -ForegroundColor DarkCyan
 
+}
+
+#---------------------------------------------------------
+
+function Get-ModuleItems {
+
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SubFolder,
+
+        [Parameter(Mandatory = $true)]
+        [string]$FunctionPattern,
+
+        [string]$BasePath = "$Global:AppRoot\Modules"
+    )
+
+    $Items = @()
+    $ModulesPath = Join-Path $BasePath $SubFolder
+
+    if (-not (Test-Path $ModulesPath)) {
+        Write-Warning "Pasta de módulos não encontrada: $ModulesPath"
+        return $Items
+    }
+
+    # Nomes dos módulos (sem extensão) presentes nessa subpasta
+    $ModuleNamesInFolder = Get-ChildItem -Path $ModulesPath -Filter "*.psm1" -File |
+        Select-Object -ExpandProperty BaseName
+
+    $MatchedFunctions = Get-Command -CommandType Function -Name $FunctionPattern -Module $ModuleNamesInFolder -ErrorAction SilentlyContinue
+
+    foreach ($func in $MatchedFunctions) {
+        $Items += & $func.Name
+    }
+
+    return $Items
 }
 
 #---------------------------------------------------------

@@ -1,11 +1,11 @@
-#=========================================================
+﻿#=========================================================
 # Explorer.psm1
-# Otimização do Explorador do Windows
+# Windows Explorer Optimization
 #=========================================================
 
 function Get-ExplorerStatus {
 
-    $Status = "Não otimizado"
+    $Status = "Not optimized"
 
     try {
 
@@ -17,17 +17,17 @@ function Get-ExplorerStatus {
             $Advanced.LaunchTo -eq 1 -and
             $Advanced.HideFileExt -eq 0
         ){
-            $Status = "Otimizado"
+            $Status = "Optimized"
         }
 
     }
     catch{
-        $Status = "Desconhecido"
+        $Status = "Unknown"
     }
 
     return [PSCustomObject]@{
 
-        Name = "Explorador"
+        Name = "Explorer"
 
         Status = $Status
 
@@ -41,12 +41,12 @@ function Get-ExplorerStatus {
 
 function Invoke-ExplorerOptimization {
 
-    Write-Log "A otimizar o Explorador..." "INFO"
+    Write-Log "Optimizing Explorer..." "INFO"
 
     $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
 
     #
-    # Criar chave caso não exista
+    # Create key if it does not exist
     #
 
     New-Item `
@@ -54,7 +54,7 @@ function Invoke-ExplorerOptimization {
         -Force | Out-Null
 
     #
-    # Abrir em Este PC
+    # Open in This PC
     #
 
     Set-ItemProperty `
@@ -64,7 +64,7 @@ function Invoke-ExplorerOptimization {
         -Type DWord
 
     #
-    # Mostrar extensões dos ficheiros
+    # Show file extensions
     #
 
     Set-ItemProperty `
@@ -74,7 +74,7 @@ function Invoke-ExplorerOptimization {
         -Type DWord
 
     #
-    # Não mostrar ficheiros recentes
+    # Do not show recent files
     #
 
     Set-ItemProperty `
@@ -85,7 +85,7 @@ function Invoke-ExplorerOptimization {
         -ErrorAction SilentlyContinue
 
     #
-    # Não mostrar pastas frequentes
+    # Do not show frequent folders
     #
 
     Set-ItemProperty `
@@ -96,7 +96,7 @@ function Invoke-ExplorerOptimization {
         -ErrorAction SilentlyContinue
 
     #
-    # Reiniciar o Explorer
+    # Restart Explorer
     #
 
     try{
@@ -111,8 +111,18 @@ function Invoke-ExplorerOptimization {
 
     Start-Process explorer.exe
 
-    Write-Log "Explorador otimizado." "OK"
+    Write-Log "Explorer optimized." "OK"
 
 }
 
 Export-ModuleMember -Function *
+
+
+
+
+
+
+
+
+
+
