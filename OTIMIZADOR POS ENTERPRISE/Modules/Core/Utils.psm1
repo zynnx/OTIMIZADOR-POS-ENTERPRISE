@@ -202,4 +202,24 @@ function Get-ModuleItems {
 
 #---------------------------------------------------------
 
+function New-ModuleResult {
+
+    param(
+        [string]$Module,
+        [int]$Success = 0,
+        [int]$Errors = 0,
+        [object[]]$Details = @(),
+        [timespan]$Elapsed
+    )
+
+    [PSCustomObject]@{
+        Module    = $Module
+        Date      = Get-Date
+        Success   = $Success
+        Errors    = $Errors
+        Duration  = $Elapsed
+        Details   = $Details
+    }
+}
+
 Export-ModuleMember -Function *

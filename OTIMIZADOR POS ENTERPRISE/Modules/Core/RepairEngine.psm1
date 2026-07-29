@@ -9,42 +9,6 @@ function Get-RepairItems {
     return Get-ModuleItems -SubFolder "Repair" -FunctionPattern "Get-*Status"
 }
 
-<# function Get-RepairItems {
-
-    $Items = @()
-
-    #
-    # Fixed module order
-    #
-
-    if (Get-Command Get-ComponentStoreStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-ComponentStoreStatus
-    }
-
-    if (Get-Command Get-DISMStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-DISMStatus
-    }
-
-    if (Get-Command Get-SFCStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-SFCStatus
-    }
-
-    if (Get-Command Get-CheckDiskStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-CheckDiskStatus
-    }
-
-    if (Get-Command Get-WindowsUpdateRepairStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-WindowsUpdateRepairStatus
-    }
-
-    if (Get-Command Get-StoreRepairStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-StoreRepairStatus
-    }
-
-    return $Items
-
-} #>
-
 #---------------------------------------------------------
 
 function Start-Repair {
@@ -160,9 +124,9 @@ function Start-Repair {
 
     foreach($Resultado in $Resultados){
 
-        Write-Host ("{0,-35} {1}" -f $Resultado.Nome,$Resultado.Estado)
+    Write-Host ("{0,-35} {1}" -f $Resultado.Name,$Resultado.Status)
 
-    }
+}
 
     Write-Host ""
     Write-Host ("Repairs OK : {0}" -f $OK)
@@ -173,10 +137,14 @@ function Start-Repair {
     Write-Host "============================================================" -ForegroundColor Cyan
 
     $Global:App.Results.Repair = [PSCustomObject]@{
-        Date = Get-Date
-        Success = $OK
-        Errors = $Erro
-    }
+
+    Date = Get-Date
+    Success = $OK
+    Errors = $Erro
+    Results = $Resultados
+    Details = $Global:App.Results.RepairDetails
+
+}
 
     Write-Log "Repair completed." "OK"
 
@@ -185,16 +153,4 @@ function Start-Repair {
 }
 
 Export-ModuleMember -Function *
-
-
-
-
-
-
-
-
-
-
-
-
 
