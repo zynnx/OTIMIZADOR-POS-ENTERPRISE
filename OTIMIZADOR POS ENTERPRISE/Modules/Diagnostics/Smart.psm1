@@ -6,100 +6,104 @@
 function Get-SmartDiagnostic {
 
     return [PSCustomObject]@{
-
         Name = "SMART"
-
         DiagnosticFunction = "Invoke-SmartDiagnostic"
-
     }
-
 }
 
 #---------------------------------------------------------
 
-function Invoke-SmartDiagnostic {
+function Invoke-SMARTDiagnostic {
 
     try {
+        $Disks = @(
+            Get-CimInstance Win32_DiskDrive -ErrorAction Stop
+        )
 
-        $Status = Get-CimInstance `
-            -Namespace root\wmi `
-            -ClassName MSStorageDriver_FailurePredictStatus `
-            -ErrorAction Stop
-
-        if($Status){
-
-            $PredictFailure = $Status | Where-Object {$_.PredictFailure -eq $true}
-
-            if($PredictFailure){
-
-                return [PSCustomObject]@{
-
-                    Name = "SMART"
-
-                    Status = "CRITICAL"
-
-                    Score = 20
-
-                    Details = "Disk indicates possible failure."
-
-                    Recommendation = "Replace the disk as soon as possible."
-
-                }
-
+        if ($Disks.Count -eq 0) {
+            return [PSCustomObject]@{
+                Name = "SMART"
+                Status = "NOT AVAILABLE"
+                Score = 80
+                Details = "No physical disks were detected."
+                Recommendation = ""
             }
-            else{
+        }
 
-                return [PSCustomObject]@{
+        $Problems = @()
+        $Checked = 0
+        $Healthy = 0
 
-                    Name = "SMART"
+        foreach ($Disk in $Disks) {
 
-                    Status = "OK"
+            $Status = $Disk.Status
 
-                    Score = 100
-
-                    Details = "No SMART failure predicted."
-
-                    Recommendation = ""
-
-                }
-
+            if ([string]::IsNullOrWhiteSpace($Status)) {
+                continue
             }
 
+            $Checked++
+
+            if ($Status -eq "OK") {
+                $Healthy++
+            }
+            else {
+                $Problems += "$($Disk.Model): $Status"
+            }
         }
+
+        #-------------------------------------------------
+        # No SMART information available
+        #-------------------------------------------------
+
+        if ($Checked -eq 0) {
+
+            return [PSCustomObject]@{
+                Name = "SMART"
+                Status = "NOT AVAILABLE"
+                Score = 80
+                Details = "SMART health information is not available from Windows."
+                Recommendation = "Check disk health using the manufacturer diagnostic tool."
+            }
+        }
+
+        #-------------------------------------------------
+        # Disk problems detected
+        #-------------------------------------------------
+
+        if ($Problems.Count -gt 0) {
+            $Details = "Potential disk problems detected: $($Problems -join '; ')"
+            return [PSCustomObject]@{
+                Name = "SMART"
+                Status = "CRITICAL"
+                Score = 20
+                Details = $Details
+                Recommendation = "Back up important data and check the affected disk immediately."
+            }
+        }
+
+        #-------------------------------------------------
+        # All disks healthy
+        #-------------------------------------------------
 
         return [PSCustomObject]@{
-
             Name = "SMART"
-
-            Status = "UNKNOWN"
-
-            Score = 80
-
-            Details = "Unable to obtain SMART information."
-
+            Status = "OK"
+            Score = 100
+            Details = "SMART disk status is healthy. $Healthy physical disk(s) checked."
             Recommendation = ""
-
         }
-
     }
-    catch{
 
+    catch {
         return [PSCustomObject]@{
-
             Name = "SMART"
-
-            Status = "NOT SUPPORTED"
-
-            Score = 80
-
-            Details = "Hardware or controller does not provide SMART."
-
-            Recommendation = ""
-
+            Status = "ERROR"
+            Score = 0
+            Details = $_.Exception.Message
+            Recommendation = "Unable to verify disk health."
         }
-
     }
-
 }
 
 Export-ModuleMember -Function *

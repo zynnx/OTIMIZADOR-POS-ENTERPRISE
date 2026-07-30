@@ -22,9 +22,7 @@ function Start-Diagnostic {
     if ($Items.Count -eq 0) {
 
         Write-WarningMessage "No diagnostic module found."
-
         Pause-App
-
         return
 
     }
@@ -42,18 +40,37 @@ function Start-Diagnostic {
             -Current $Current `
             -Total $Items.Count
 
+        $ModuleWatch = Start-Stopwatch
+
         try {
 
             if (-not $Item.DiagnosticFunction) {
-                throw "Item '$($Item.Name)' não tem DiagnosticFunction definida."
+                throw "Item '$($Item.Name)' does not have DiagnosticFunction defined."
             }
 
-            $Function = Get-Command $Item.DiagnosticFunction -CommandType Function -ErrorAction Stop
+            $Function = Get-Command `
+                $Item.DiagnosticFunction `
+                -CommandType Function `
+                -ErrorAction Stop
 
-            $Results += & $Function
+            $DiagnosticResult = & $Function
+
+            $ModuleElapsed = Stop-Stopwatch $ModuleWatch
+
+            $Results += [PSCustomObject]@{
+
+                Name           = $DiagnosticResult.Name
+                Status         = $DiagnosticResult.Status
+                Score          = $DiagnosticResult.Score
+                Details        = $DiagnosticResult.Details
+                Recommendation = $DiagnosticResult.Recommendation
+                Elapsed        = $ModuleElapsed
+
+            }
 
         }
         catch {
+            $ModuleElapsed = Stop-Stopwatch $ModuleWatch
 
             $Results += [PSCustomObject]@{
 
@@ -62,12 +79,10 @@ function Start-Diagnostic {
                 Score          = 0
                 Details        = $_.Exception.Message
                 Recommendation = ""
-
+                Elapsed        = $ModuleElapsed
             }
-
         }
     }
-
     
 
     Write-Progress -Activity "Diagnostics" -Completed
@@ -79,12 +94,19 @@ function Start-Diagnostic {
     $Score = 0
 
     foreach ($Result in $Results) {
-
         $Score += $Result.Score
-
     }
 
-    $FinalScore = [math]::Round($Score / $Results.Count)
+    if ($Results.Count -gt 0) {
+
+        $FinalScore = [math]::Round(
+            $Score / $Results.Count
+        )
+
+    }
+    else {
+        $FinalScore = 0
+    }
 
     #
     # Mostrar resultados
@@ -101,9 +123,7 @@ function Start-Diagnostic {
         Write-Host ("{0,-25} {1}" -f $Result.Name, $Result.Status)
 
         if ($Result.Details) {
-
             Write-Host ("   {0}" -f $Result.Details) -ForegroundColor DarkGray
-
         }
 
     }
@@ -113,32 +133,46 @@ function Start-Diagnostic {
 
     Write-Host ("Score : {0}/100" -f $FinalScore)
 
-    switch ($FinalScore) {
+    #---------------------------------------------------------
+    # Determine diagnostic state
+    #---------------------------------------------------------
 
-        { $_ -ge 95 } {
-
-            $State = "EXCELLENT"
-
+    $HasCritical = @(
+        $Results | Where-Object {
+            $_.Status -eq "CRITICAL"
         }
+    ).Count -gt 0
 
-        { $_ -ge 80 } {
-
-            $State = "GOOD"
-
+    $HasWarning = @(
+        $Results | Where-Object {
+            $_.Status -eq "WARNING"
         }
+    ).Count -gt 0
 
-        { $_ -ge 60 } {
-
-            $State = "WARNING"
-
+    $HasErrors = @(
+        $Results | Where-Object {
+            $_.Status -eq "ERROR"
         }
+    ).Count -gt 0
 
-        default {
 
-            $State = "CRITICAL"
-
-        }
-
+    if ($HasErrors) {
+        $State = "ERROR"
+    }
+    elseif ($HasCritical) {
+        $State = "CRITICAL"
+    }
+    elseif ($HasWarning) {
+        $State = "WARNING"
+    }
+    elseif ($FinalScore -ge 95) {
+        $State = "EXCELLENT"
+    }
+    elseif ($FinalScore -ge 80) {
+        $State = "GOOD"
+    }
+    else {
+        $State = "WARNING"
     }
 
     Write-Host ("Status     : {0}" -f $State)
@@ -166,6 +200,18 @@ function Start-Diagnostic {
 
     }
 
+    $Success = @(
+        $Results | Where-Object {
+            $_.Status -eq "OK"
+        }
+    ).Count
+
+    $Errors = @(
+        $Results | Where-Object {
+            $_.Status -eq "ERROR"
+        }
+    ).Count
+
     $Elapsed = Stop-Stopwatch $Watch
 
     Write-Host ""
@@ -182,6 +228,18 @@ function Start-Diagnostic {
         -Errors $Errors `
         -Details $Results `
         -Elapsed $Elapsed
+
+    $Global:App.Results.Diagnostic | Add-Member `
+        -MemberType NoteProperty `
+        -Name Score `
+        -Value $FinalScore `
+        -Force
+
+    $Global:App.Results.Diagnostic | Add-Member `
+        -MemberType NoteProperty `
+        -Name State `
+        -Value $State `
+        -Force
 
     Pause-App
 }

@@ -21,6 +21,8 @@ function Start-Report {
 
     $Html += Get-SystemSection
 
+    $Html += Get-SummarySection
+
     $Html += Get-CleaningSection
 
     $Html += Get-OptimizationSection
@@ -52,7 +54,7 @@ function Start-Report {
     # Open automatically
     #
 
-    if(Test-Path $File){
+    if (Test-Path $File) {
 
         Start-Process $File
 

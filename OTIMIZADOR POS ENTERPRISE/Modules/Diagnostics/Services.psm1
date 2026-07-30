@@ -6,11 +6,8 @@
 function Get-ServicesDiagnostic {
 
     return [PSCustomObject]@{
-
-        Name = "Services"
-
+        Name               = "Services"
         DiagnosticFunction = "Invoke-ServicesDiagnostic"
-
     }
 
 }
@@ -19,77 +16,112 @@ function Get-ServicesDiagnostic {
 
 function Invoke-ServicesDiagnostic {
 
-    #
-    # Critical Windows services
-    #
+    #-----------------------------------------------------
+    # Essential Windows services
+    #-----------------------------------------------------
 
-    $Services = @(
-
-        "Spooler",
-        "wuauserv",
-        "BITS",
-        "EventLog"
-
+    $CriticalServices = @(
+        "EventLog",
+        "Spooler"
     )
 
-    $Stopped = @()
+    #-----------------------------------------------------
+    # Important but non-critical services
+    #-----------------------------------------------------
 
-    foreach($Name in $Services){
+    $ImportantServices = @(
+        "wuauserv",
+        "BITS"
+    )
 
-        try{
+    $CriticalStopped = @()
+    $ImportantStopped = @()
+    $NotFound = @()
 
+    #-----------------------------------------------------
+    # Check critical services
+    #-----------------------------------------------------
+
+    foreach ($Name in $CriticalServices) {
+
+        try {
             $Service = Get-Service $Name -ErrorAction Stop
-
-            if($Service.Status -ne "Running"){
-
-                $Stopped += $Name
-
+            if ($Service.Status -ne "Running") {
+                $CriticalStopped += $Name
             }
-
         }
-        catch{
-
-            $Stopped += "$Name (Not found)"
-
+        catch {
+            $NotFound += $Name
         }
-
     }
 
-    if($Stopped.Count -eq 0){
+    #-----------------------------------------------------
+    # Check important services
+    #-----------------------------------------------------
 
-        return [PSCustomObject]@{
+    foreach ($Name in $ImportantServices) {
 
-            Name = "Services"
-
-            Status = "OK"
-
-            Score = 100
-
-            Details = "All critical services are active."
-
-            Recommendation = ""
-
+        try {
+            $Service = Get-Service $Name -ErrorAction Stop
+            if ($Service.Status -ne "Running") {
+                $ImportantStopped += $Name
+            }
         }
+        catch {
+            $NotFound += $Name
+        }
+    }
 
+    #-----------------------------------------------------
+    # Critical service failure
+    #-----------------------------------------------------
+
+    if ($CriticalStopped.Count -gt 0) {
+        $Status = "CRITICAL"
+        $Score = 40
+        $Details = "Critical services stopped: $($CriticalStopped -join ', ')"
+        $Recommendation = "Start the stopped critical services and verify Windows service health."
+    }
+
+    #-----------------------------------------------------
+    # Important services stopped
+    #-----------------------------------------------------
+
+    elseif ($ImportantStopped.Count -gt 0) {
+        $Status = "WARNING"
+        $Score = 80
+        $Details = "Important services stopped: $($ImportantStopped -join ', ')"
+        $Recommendation = "Review Windows Update services if updates or maintenance are required."
+    }
+
+    #-----------------------------------------------------
+    # Services not found
+    #-----------------------------------------------------
+
+    elseif ($NotFound.Count -gt 0) {
+        $Status = "WARNING"
+        $Score = 80
+        $Details = "Services not found: $($NotFound -join ', ')"
+        $Recommendation = "Verify the Windows service configuration."
+    }
+
+    #-----------------------------------------------------
+    # Everything OK
+    #-----------------------------------------------------
+
+    else {
+        $Status = "OK"
+        $Score = 100
+        $Details = "All required Windows services are running."
+        $Recommendation = ""
     }
 
     return [PSCustomObject]@{
-
-        Name = "Services"
-
-        Status = "WARNING"
-
-        Score = 70
-
-        Details = "Stopped: $($Stopped -join ', ')"
-
-        Recommendation = "Please start the missing services or review service health."
-
+        Name           = "Services"
+        Status         = $Status
+        Score          = $Score
+        Details        = $Details
+        Recommendation = $Recommendation
     }
-
 }
-
 Export-ModuleMember -Function *
-
-
-

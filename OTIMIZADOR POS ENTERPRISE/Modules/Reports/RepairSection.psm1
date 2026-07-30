@@ -60,20 +60,6 @@ function Get-RepairSection {
 
     </div>
 
-    <div class="card ok">
-
-        <div class="card-title">
-            Execution Time
-        </div>
-
-        <div class="card-value">
-            N/A
-    </div>
-
-</div>
-
-</div>
-
 </div>
 
 <div class="system-status $Status">
@@ -95,6 +81,7 @@ function Get-RepairSection {
 <tr>
     <th>Repair</th>
     <th>Status</th>
+    <th>Execution Time</th>
 </tr>
 
 "@
@@ -102,6 +89,8 @@ function Get-RepairSection {
     foreach ($Item in $R.Details) {
 
         $RowClass = "ok"
+        $TimeClass = "ok"
+        $TimeLabel = "N/A"
 
         if ($Item.Status -eq "ERROR") {
 
@@ -109,14 +98,40 @@ function Get-RepairSection {
 
         }
 
+        if ($null -ne $Item.Elapsed) {
+
+            $TimeLabel = Format-Time $Item.Elapsed
+
+            # More than 2 minutes = slow
+            if ($Item.Elapsed.TotalSeconds -gt 120) {
+
+                $TimeClass = "warn"
+
+            }
+
+            # More than 5 minutes = very slow
+            if ($Item.Elapsed.TotalSeconds -gt 300) {
+
+                $TimeClass = "error"
+
+            }
+
+        }
+
         $Html += @"
 
 <tr>
 
-    <td>$($Item.Name)</td>
+    <td>
+        $($Item.Name)
+    </td>
 
     <td class="$RowClass">
         $($Item.Status)
+    </td>
+
+    <td class="$TimeClass">
+        $TimeLabel
     </td>
 
 </tr>

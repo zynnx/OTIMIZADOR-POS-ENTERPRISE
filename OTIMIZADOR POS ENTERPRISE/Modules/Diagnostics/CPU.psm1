@@ -6,13 +6,9 @@
 function Get-CPUDiagnostic {
 
     return [PSCustomObject]@{
-
         Name = "CPU"
-
         DiagnosticFunction = "Invoke-CPUDiagnostic"
-
     }
-
 }
 
 #---------------------------------------------------------
@@ -20,91 +16,107 @@ function Get-CPUDiagnostic {
 function Invoke-CPUDiagnostic {
 
     try {
+        #-------------------------------------------------
+        # CPU information
+        #-------------------------------------------------
 
-        $CPU = Get-CimInstance Win32_Processor
+        $CPU = Get-CimInstance Win32_Processor -ErrorAction Stop
 
-        $Load = [int]$CPU.LoadPercentage
+        if (-not $CPU) {
+            throw "Unable to retrieve CPU information."
+        }
 
-        $Name = $CPU.Name.Trim()
+        $Name = ($CPU | Select-Object -First 1).Name
+        $Cores = ($CPU | Measure-Object -Property NumberOfCores -Sum).Sum
+        $Threads = ($CPU | Measure-Object -Property NumberOfLogicalProcessors -Sum).Sum
 
-        $Cores = $CPU.NumberOfCores
+        $MaxClock = [math]::Round(
+            (($CPU | Measure-Object -Property MaxClockSpeed -Average).Average) / 1000,
+            2
+        )
 
-        $Threads = $CPU.NumberOfLogicalProcessors
+        #-------------------------------------------------
+        # CPU usage sampling
+        #-------------------------------------------------
 
-        $Speed = [math]::Round($CPU.MaxClockSpeed / 1000,2)
+        $Samples = @()
 
-        #
+        for ($i = 0; $i -lt 3; $i++) {
+
+            $Sample = Get-CimInstance Win32_Processor |
+                Measure-Object -Property LoadPercentage -Average
+
+            if ($null -ne $Sample.Average) {
+                $Samples += [double]$Sample.Average
+            }
+
+            if ($i -lt 2) {
+                Start-Sleep -Seconds 1
+            }
+        }
+
+        if ($Samples.Count -gt 0) {
+            $Usage = [math]::Round(
+                ($Samples | Measure-Object -Average).Average
+            )
+        }
+        else {
+            $Usage = 0
+        }
+
+        #-------------------------------------------------
         # Classification
-        #
+        #-------------------------------------------------
 
-        if($Load -lt 60){
-
+        if ($Usage -lt 60) {
             $Status = "OK"
             $Score = 100
             $Recommendation = ""
-
         }
-        elseif($Load -lt 80){
-
+        elseif ($Usage -lt 80) {
             $Status = "WARNING"
-            $Score = 90
-            $Recommendation = "Check running applications."
-
+            $Score = 85
+            $Recommendation = "Monitor CPU usage and check applications if high usage persists."
         }
-        elseif($Load -lt 95){
-
-            $Status = "ELEVADA"
+        elseif ($Usage -lt 95) {
+            $Status = "WARNING"
             $Score = 70
-            $Recommendation = "Analyze high usage processes."
-
+            $Recommendation = "Check applications and processes consuming CPU resources."
         }
-        else{
-
+        else {
             $Status = "CRITICAL"
             $Score = 30
-            $Recommendation = "Check for possible system lock or overload."
-
+            $Recommendation = "Investigate processes causing sustained high CPU usage."
         }
 
+        #-------------------------------------------------
+        # Details
+        #-------------------------------------------------
+
+        $Details = "{0} | {1} Cores | {2} Threads | {3} GHz | Average usage: {4}%" -f `
+            $Name,
+            $Cores,
+            $Threads,
+            $MaxClock,
+            $Usage
+
         return [PSCustomObject]@{
-
             Name = "CPU"
-
             Status = $Status
-
             Score = $Score
-
-            Details = "$Name | $Cores Cores | $Threads Threads | $Speed GHz | $Load%"
-
+            Details = $Details
             Recommendation = $Recommendation
-
         }
-
     }
-    catch{
-
+    catch {
         return [PSCustomObject]@{
-
             Name = "CPU"
-
             Status = "ERROR"
-
             Score = 0
-
             Details = $_.Exception.Message
-
-            Recommendation = "Check processor."
-
+            Recommendation = "Unable to determine CPU health."
         }
-
     }
-
 }
 
 Export-ModuleMember -Function *
-
-
-
-
-
-

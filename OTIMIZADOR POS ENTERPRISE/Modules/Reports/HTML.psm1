@@ -210,6 +210,106 @@ th{
 
 }
 
+/*=========================================================
+Enterprise Dashboard
+=========================================================*/
+
+.dashboard-grid{
+
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+margin:20px 0 30px 0;
+
+
+}
+
+.dashboard-card{
+
+
+border:1px solid var(--border);
+border-radius:12px;
+padding:20px;
+background:white;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+
+
+}
+
+.dashboard-card-title{
+
+
+color:#666;
+font-size:13px;
+font-weight:600;
+text-transform:uppercase;
+margin-bottom:8px;
+
+
+}
+
+.dashboard-card-value{
+
+
+font-size:26px;
+font-weight:700;
+
+
+}
+
+.dashboard-card.ok{
+
+
+border-top:5px solid var(--success);
+
+
+}
+
+.dashboard-card.warn{
+
+
+border-top:5px solid var(--warning);
+
+
+}
+
+.dashboard-card.error{
+
+
+border-top:5px solid var(--danger);
+
+
+}
+
+.dashboard-card.info{
+
+
+border-top:5px solid var(--primary);
+
+
+}
+
+@media(max-width:1000px){
+
+.dashboard-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:600px){
+
+.dashboard-grid{
+
+    grid-template-columns:1fr;
+
+}
+}
+
+
 </style>
 
 </head>

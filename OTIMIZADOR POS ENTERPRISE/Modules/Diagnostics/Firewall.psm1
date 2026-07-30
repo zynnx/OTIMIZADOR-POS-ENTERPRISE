@@ -7,7 +7,7 @@ function Get-FirewallDiagnostic {
 
     return [PSCustomObject]@{
 
-        Name = "Firewall"
+        Name               = "Firewall"
 
         DiagnosticFunction = "Invoke-FirewallDiagnostic"
 
@@ -21,54 +21,87 @@ function Invoke-FirewallDiagnostic {
 
     try {
 
-        $Profiles = Get-NetFirewallProfile -ErrorAction Stop
+        $Profiles = @(Get-NetFirewallProfile -ErrorAction Stop)
 
-        $Disabled = $Profiles | Where-Object { $_.Enabled -eq $false }
+        if ($Profiles.Count -eq 0) {
+            return [PSCustomObject]@{
+                Name           = "Firewall"
+                Status         = "ERROR"
+                Score          = 50
+                Details        = "No firewall profiles were found."
+                Recommendation = "Check the Windows Firewall configuration."
 
-        if ($Disabled.Count -eq 0) {
+            }
 
+        }
+        $Enabled = @(
+            $Profiles | Where-Object {
+                $_.Enabled -eq $true
+            }
+        )
+
+        $Disabled = @(
+            $Profiles | Where-Object {
+                $_.Enabled -eq $false
+            }
+        )
+
+        $Total = $Profiles.Count
+        $EnabledCount = $Enabled.Count
+        $DisabledCount = $Disabled.Count
+
+        #-------------------------------------------------
+        # All profiles enabled
+        #-------------------------------------------------
+
+        if ($DisabledCount -eq 0) {
             $Status = "OK"
             $Score = 100
-            $Details = "Firewall ativa em todos os perfis."
+            $Details = "Windows Firewall is enabled on all profiles ($EnabledCount/$Total)."
             $Recommendation = ""
-
         }
-        else {
 
+        #-------------------------------------------------
+        # Some profiles disabled
+        #-------------------------------------------------
+
+        elseif ($EnabledCount -gt 0) {
             $Names = ($Disabled.Name -join ", ")
-
             $Status = "WARNING"
-            $Score = 80
-            $Details = "Disabled profiles: $Names"
-            $Recommendation = "Check the firewall configuration."
+            $Score = 70
+            $Details = "Firewall enabled on $EnabledCount/$Total profiles. Disabled: $Names."
+            $Recommendation = "Review the disabled firewall profiles."
+        }
 
+        #-------------------------------------------------
+        # All profiles disabled
+        #-------------------------------------------------
+
+        else {
+            $Names = ($Disabled.Name -join ", ")
+            $Status = "CRITICAL"
+            $Score = 20
+            $Details = "Windows Firewall is disabled on all profiles: $Names."
+            $Recommendation = "Enable Windows Firewall on all active network profiles."
         }
 
         return [PSCustomObject]@{
-
-            Name = "Firewall"
-            Status = $Status
-            Score = $Score
-            Details = $Details
+            Name           = "Firewall"
+            Status         = $Status
+            Score          = $Score
+            Details        = $Details
             Recommendation = $Recommendation
-
         }
-
     }
     catch {
-
         return [PSCustomObject]@{
-
-            Name = "Firewall"
-            Status = "ERROR"
-            Score = 50
-            Details = "Unable to verify the firewall."
-            Recommendation = "Check the firewall service."
-
+            Name           = "Firewall"
+            Status         = "ERROR"
+            Score          = 50
+            Details        = "Unable to verify Windows Firewall status."
+            Recommendation = "Check the Windows Firewall service and configuration."
         }
-
     }
-
 }
 
 Export-ModuleMember -Function *
