@@ -7,61 +7,6 @@ function Get-OptimizationItems {
     return Get-ModuleItems -SubFolder "Optimization" -FunctionPattern "Get-*Status"
 }
 
-<# function Get-OptimizationItems {
-
-    param(
-        [string]$ModulesPath = "$PSScriptRoot\..\Optimization"
-    )
-
-    $Items = @()
-    $ImportedModuleNames = @()
-
-    Get-ChildItem -Path $ModulesPath -Filter "*.psm1" -File | ForEach-Object {
-        $Module = Import-Module $_.FullName -Force -PassThru
-        $ImportedModuleNames += $Module.Name
-    }
-
-    $StatusFunctions = Get-Command -CommandType Function -Name "Get-*Status" -Module $ImportedModuleNames -ErrorAction SilentlyContinue
-
-    foreach ($func in $StatusFunctions) {
-        $Items += & $func.Name
-    }
-
-    return $Items
-} #>
-
-<# function Get-OptimizationItems {
-
-    $Items = @()
-
-    if (Get-Command Get-VisualEffectsStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-VisualEffectsStatus
-    }
-
-    if (Get-Command Get-PowerPlanStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-PowerPlanStatus
-    }
-
-    if (Get-Command Get-ExplorerStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-ExplorerStatus
-    }
-
-    if (Get-Command Get-StartupStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-StartupStatus
-    }
-
-    if (Get-Command Get-SSDStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-SSDStatus
-    }
-
-    if (Get-Command Get-ServicesStatus -ErrorAction SilentlyContinue) {
-        $Items += Get-ServicesStatus
-    }
-
-    return $Items
-
-} #>
-
 #---------------------------------------------------------
 
 function Start-Optimization {
@@ -87,9 +32,9 @@ function Start-Optimization {
     Write-Host "Current system status" -ForegroundColor Cyan
     Write-Host ""
 
-    foreach($Item in $Items){
+    foreach ($Item in $Items) {
 
-        Write-Host ("{0,-30} {1}" -f $Item.Name,$Item.Status)
+        Write-Host ("{0,-30} {1}" -f $Item.Name, $Item.Status)
 
     }
 
@@ -101,7 +46,7 @@ function Start-Optimization {
     $Erro = 0
     $Current = 0
 
-    foreach($Item in $Items){
+    foreach ($Item in $Items) {
 
         $Current++
 
@@ -110,7 +55,7 @@ function Start-Optimization {
             -Current $Current `
             -Total $Items.Count
 
-        try{
+        try {
 
             if (-not $Item.OptimizeFunction) {
                 throw "OptimizeFunction is not defined for $($Item.Name)."
@@ -129,7 +74,7 @@ function Start-Optimization {
             $OK++
 
         }
-        catch{
+        catch {
 
             Write-ErrorMessage $Item.Name
 
@@ -161,14 +106,17 @@ function Start-Optimization {
 
     Write-Log "Optimization completed." "OK"
 
+    $Global:App.Results.Optimization = [PSCustomObject]@{
+        Date    = Get-Date
+        Success = $OK
+        Errors  = $Erro
+        Actions = $Actions
+        Elapsed = $Elapsed
+    }
     Pause-App
 
 }
-$Global:App.Results.Optimization = [PSCustomObject]@{
-    Date = Get-Date
-    Success = $OK
-    Errors = $Erro
-}
+
 
 Export-ModuleMember -Function *
 

@@ -15,11 +15,11 @@ $Global:AppRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $Global:App = @{
 
-    Root        = Split-Path -Parent $MyInvocation.MyCommand.Path
-    Version     = "3.0.0"
-    Config      = $null
-    LogFile     = $null
-    Results     = @{}
+    Root    = Split-Path -Parent $MyInvocation.MyCommand.Path
+    Version = "3.0.0"
+    Config  = $null
+    LogFile = $null
+    Results = @{}
 
 }
 
@@ -30,11 +30,10 @@ $Global:App = @{
 # Check for administrator
 #-------------------------
 
-$Identity  = [Security.Principal.WindowsIdentity]::GetCurrent()
+$Identity = [Security.Principal.WindowsIdentity]::GetCurrent()
 $Principal = New-Object Security.Principal.WindowsPrincipal($Identity)
 
-if (-not $Principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))
-{
+if (-not $Principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
     Write-Host ""
     Write-Host "This program must be run as administrator." -ForegroundColor Red
     Write-Host ""
@@ -54,12 +53,10 @@ $Folders = @(
     "Config"
 )
 
-foreach($Folder in $Folders)
-{
+foreach ($Folder in $Folders) {
     $Path = Join-Path $Global:AppRoot $Folder
 
-    if(!(Test-Path $Path))
-    {
+    if (!(Test-Path $Path)) {
         New-Item -ItemType Directory -Path $Path | Out-Null
     }
 }
@@ -70,9 +67,8 @@ foreach($Folder in $Folders)
 
 $ConfigFile = Join-Path $Global:AppRoot "Config\Config.json"
 
-if(!(Test-Path $ConfigFile))
-{
-@'
+if (!(Test-Path $ConfigFile)) {
+    @'
 {
     "Version":"3.0",
     "CreateRestorePoint":true,
@@ -91,11 +87,51 @@ $Global:Config = Get-Content $ConfigFile -Raw | ConvertFrom-Json
 # Load modules
 #-------------------------
 
-$Modules = Get-ChildItem "$Global:AppRoot\Modules" -Filter *.psm1 -Recurse
+$PriorityModules = @(
+    "Modules\Core\Utils.psm1",
+    "Modules\Core\Logging.psm1",
+    "Modules\Core\FileSystem.psm1",
+    "Modules\Reports\HTML.psm1",
+    "Modules\Reports\SaveReport.psm1",
+    "Modules\Reports\SystemSection.psm1",
+    "Modules\Reports\CleaningSection.psm1",
+    "Modules\Reports\OptimizationSection.psm1",
+    "Modules\Reports\RepairSection.psm1",
+    "Modules\Reports\DiagnosticSection.psm1"
+)
 
-foreach($Module in $Modules)
-{
-    Import-Module $Module.FullName -Force 
+foreach ($Module in $PriorityModules) {
+
+    $Path = Join-Path $Global:AppRoot $Module
+
+    if (Test-Path $Path) {
+
+        Import-Module $Path -Force
+
+    }
+    else {
+
+        Write-Warning "Module not found: $Path"
+
+    }
+
+}
+
+# Load remaining modules
+$LoadedPriorityPaths = $PriorityModules |
+    ForEach-Object {
+        Join-Path $Global:AppRoot $_
+    }
+
+$Modules = Get-ChildItem "$Global:AppRoot\Modules" -Filter *.psm1 -Recurse |
+    Where-Object {
+        $_.FullName -notin $LoadedPriorityPaths
+    }
+
+foreach ($Module in $Modules) {
+
+    Import-Module $Module.FullName -Force
+
 }
 
 #-------------------------

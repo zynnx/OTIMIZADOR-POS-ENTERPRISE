@@ -80,8 +80,15 @@ function Start-Inventory {
         Write-Host " No critical software found."
 
     }
+    $Global:App.Results.Inventory = New-ModuleResult `
+    -Module "Inventory" `
+    -Success 1 `
+    -Errors 0 `
+    -Details $Inventory `
+    -Elapsed $Elapsed
+    
     Pause-App
-
 }
+
 
 Export-ModuleMember -Function *

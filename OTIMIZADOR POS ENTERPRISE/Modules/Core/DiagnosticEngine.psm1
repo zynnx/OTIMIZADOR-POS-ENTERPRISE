@@ -176,11 +176,12 @@ function Start-Diagnostic {
 
     Write-Log "Diagnostic completed." "OK"
 
-    $Global:App.Results.Diagnostic = [PSCustomObject]@{
-        Date    = Get-Date
-        Score   = $FinalScore
-        Results = $Results
-    }
+    $Global:App.Results.Diagnostic = New-ModuleResult `
+        -Module "Diagnostic" `
+        -Success $Success `
+        -Errors $Errors `
+        -Details $Results `
+        -Elapsed $Elapsed
 
     Pause-App
 }

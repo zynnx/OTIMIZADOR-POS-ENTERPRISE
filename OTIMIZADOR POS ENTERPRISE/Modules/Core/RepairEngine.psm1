@@ -20,14 +20,14 @@ function Start-Repair {
     $Watch = Start-Stopwatch
 
     $Global:App.Results.Repair = [PSCustomObject]@{
-        Date = Get-Date
+        Date    = Get-Date
         Success = 0
-        Errors = 0
+        Errors  = 0
     }
 
     $Items = Get-RepairItems
 
-    if ($Items.Count -eq 0){
+    if ($Items.Count -eq 0) {
 
         Write-WarningMessage "No repair modules found."
 
@@ -40,9 +40,9 @@ function Start-Repair {
     Write-Host "Available modules:" -ForegroundColor Cyan
     Write-Host ""
 
-    foreach($Item in $Items){
+    foreach ($Item in $Items) {
 
-        Write-Host ("{0,-35} {1}" -f $Item.Name,$Item.Status)
+        Write-Host ("{0,-35} {1}" -f $Item.Name, $Item.Status)
 
     }
 
@@ -56,7 +56,7 @@ function Start-Repair {
 
     $Current = 0
 
-    foreach($Item in $Items){
+    foreach ($Item in $Items) {
 
         $Current++
 
@@ -65,7 +65,9 @@ function Start-Repair {
             -Current $Current `
             -Total $Items.Count
 
-        try{
+        $ModuleWatch = Start-Stopwatch
+
+        try {
 
             if (-not $Item.RepairFunction) {
                 throw "RepairFunction is not defined for $($Item.Name)."
@@ -77,10 +79,15 @@ function Start-Repair {
 
             & $Item.RepairFunction
 
+            $ModuleElapsed = Stop-Stopwatch $ModuleWatch
+
+            Write-Host ("   Time: {0}" -f (Format-Time $ModuleElapsed)) -ForegroundColor DarkGray
+
             $Resultados += [PSCustomObject]@{
 
-                Name = $Item.Name
-                Status = "OK"
+                Name    = $Item.Name
+                Status  = "OK"
+                Elapsed = $ModuleElapsed
 
             }
 
@@ -91,12 +98,15 @@ function Start-Repair {
             $OK++
 
         }
-        catch{
+        catch {
+
+            $ModuleElapsed = Stop-Stopwatch $ModuleWatch
 
             $Resultados += [PSCustomObject]@{
 
-                Name = $Item.Name
-                Status = "ERROR"
+                Name    = $Item.Name
+                Status  = "ERROR"
+                Elapsed = $ModuleElapsed
 
             }
 
@@ -122,11 +132,11 @@ function Start-Repair {
     Write-Host "============================================================"
     Write-Host ""
 
-    foreach($Resultado in $Resultados){
+    foreach ($Resultado in $Resultados) {
 
-    Write-Host ("{0,-35} {1}" -f $Resultado.Name,$Resultado.Status)
+        Write-Host ("{0,-35} {1}" -f $Resultado.Name, $Resultado.Status)
 
-}
+    }
 
     Write-Host ""
     Write-Host ("Repairs OK : {0}" -f $OK)
@@ -136,15 +146,12 @@ function Start-Repair {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
 
-    $Global:App.Results.Repair = [PSCustomObject]@{
-
-    Date = Get-Date
-    Success = $OK
-    Errors = $Erro
-    Results = $Resultados
-    Details = $Global:App.Results.RepairDetails
-
-}
+    $Global:App.Results.Repair = New-ModuleResult `
+        -Module "Repair" `
+        -Success $OK `
+        -Errors $Erro `
+        -Details $Resultados `
+        -Elapsed $Elapsed
 
     Write-Log "Repair completed." "OK"
 

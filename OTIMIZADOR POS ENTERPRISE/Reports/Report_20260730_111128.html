@@ -1,0 +1,526 @@
+﻿<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="utf-8">
+
+<title>OTIMIZADOR POS ENTERPRISE</title>
+
+<style>
+
+body{
+
+    font-family:Segoe UI,Arial;
+    background:#f4f4f4;
+    margin:30px;
+
+}
+:root{
+
+    --primary:#005a9e;
+    --success:#2e7d32;
+    --warning:#f9a825;
+    --danger:#c62828;
+    --light:#f5f7fa;
+    --border:#d9dee5;
+
+}
+.container{
+
+    max-width:1400px;
+    margin:auto;
+    background:white;
+    border-radius:12px;
+    padding:30px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+h1{
+
+    margin:0;
+    color:var(--primary);
+    font-size:34px;
+
+}
+
+.subtitle{
+
+    color:#666;
+    margin-bottom:25px;
+
+}
+
+h2{
+
+    border-bottom:1px solid #ddd;
+    padding-bottom:5px;
+
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+td,th{
+
+    border:1px solid #ddd;
+    padding:8px;
+
+}
+
+th{
+
+    background:#efefef;
+
+}
+
+.ok{
+
+    color:green;
+    font-weight:bold;
+
+}
+
+.warn{
+
+    color:orange;
+    font-weight:bold;
+
+}
+
+.error{
+
+    color:red;
+    font-weight:bold;
+
+}
+
+.footer{
+
+    margin-top:40px;
+    color:#777;
+    font-size:12px;
+
+}
+
+    .separator{
+
+    height:2px;
+    background:#ececec;
+    margin:25px 0;
+
+}
+/*---------------------------------------------------------
+  Dashboard Cards
+---------------------------------------------------------*/
+
+.dashboard{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+    margin:25px 0;
+
+}
+
+.card{
+
+    background:var(--light);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px;
+
+}
+
+.card-title{
+
+    font-size:12px;
+    color:#666;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-bottom:8px;
+
+}
+
+.card-value{
+
+    font-size:20px;
+    font-weight:600;
+    color:#222;
+
+}
+.card.ok{
+    border-left:5px solid var(--success);
+}
+
+.card.warn{
+    border-left:5px solid var(--warning);
+}
+
+.card.error{
+    border-left:5px solid var(--danger);
+}
+
+.system-status{
+
+    padding:20px;
+    margin:20px 0 25px 0;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--light);
+
+}
+
+.system-status.ok{
+
+    border-left:6px solid var(--success);
+
+}
+
+.system-status.warn{
+
+    border-left:6px solid var(--warning);
+
+}
+
+.system-status.error{
+
+    border-left:6px solid var(--danger);
+
+}
+
+.status-value{
+
+    font-size:28px;
+    font-weight:700;
+    margin-top:5px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>OTIMIZADOR POS ENTERPRISE</h1>
+
+<div class="subtitle"> Enterprise Maintenance Report</div>
+
+<p>Report generated on: 30-07-2026 11:11:28</p>
+
+<div class="separator"></div>
+
+    
+<div class="system-status ok">
+
+    <div class="card-title">Overall System Status</div>
+
+    <div class="status-value">HEALTHY</div>
+
+</div>
+
+<h2>System Information</h2>
+
+<div class="dashboard">
+
+    <div class="card">
+        <div class="card-title">Computer</div>
+        <div class="card-value">DESKTOP-UV20AH8</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Windows</div>
+        <div class="card-value">Microsoft Windows 10 Pro</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">CPU</div>
+        <div class="card-value">Intel(R) Core(TM) i5-9500 CPU @ 3.00GHz</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">RAM</div>
+        <div class="card-value">7.95 GB</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Free Disk</div>
+        <div class="card-value">475.06 GB</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Uptime</div>
+        <div class="card-value">14 dias 18 horas 32 minutos</div>
+    </div>
+
+</div>
+
+<br>
+
+
+<h2>Smart Cleaning</h2>
+
+<div class="dashboard">
+
+    <div class="card ok">
+        <div class="card-title">Items Analyzed</div>
+        <div class="card-value">6</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Cleanups Successful</div>
+        <div class="card-value">6</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Errors</div>
+        <div class="card-value">0</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Space Recovered</div>
+        <div class="card-value">5,07 MB</div>
+    </div>
+
+</div>
+
+<div class="system-status ok">
+
+    <div class="card-title">Cleaning Status</div>
+
+    <div class="status-value">COMPLETED</div>
+
+</div>
+
+
+<h2>Windows Optimization</h2>
+
+<div class="dashboard">
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Successful Actions
+        </div>
+
+        <div class="card-value">
+            5
+        </div>
+
+    </div>
+
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Errors
+        </div>
+
+        <div class="card-value">
+            0
+        </div>
+
+    </div>
+
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Execution Time
+        </div>
+
+        <div class="card-value">
+            00:00:22
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="system-status ok">
+
+    <div class="card-title">
+        Optimization Status
+    </div>
+
+    <div class="status-value">
+        COMPLETED
+    </div>
+
+</div>
+
+
+<h2>Windows Repair</h2>
+
+<div class="dashboard">
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Repairs Successful
+        </div>
+
+        <div class="card-value">
+            6
+        </div>
+
+    </div>
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Errors
+        </div>
+
+        <div class="card-value">
+            0
+        </div>
+
+    </div>
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Execution Time
+        </div>
+
+        <div class="card-value">
+            N/A
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="system-status ok">
+
+    <div class="card-title">
+        Repair Status
+    </div>
+
+    <div class="status-value">
+        COMPLETED
+    </div>
+
+</div>
+
+<h3>Repair Details</h3>
+
+<table>
+
+<tr>
+    <th>Repair</th>
+    <th>Status</th>
+</tr>
+
+<tr>
+
+    <td>CHKDSK</td>
+
+    <td class="ok">
+        OK
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>Component Store</td>
+
+    <td class="ok">
+        OK
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>DISM RestoreHealth</td>
+
+    <td class="ok">
+        OK
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>Microsoft Store</td>
+
+    <td class="ok">
+        OK
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>Windows System Repair</td>
+
+    <td class="ok">
+        OK
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>Windows Update</td>
+
+    <td class="ok">
+        OK
+    </td>
+
+</tr>
+
+</table>
+
+<br>
+
+
+<h2>Diagnostic</h2>
+
+<table>
+
+<tr>
+
+<th>Component</th>
+
+<th>Status</th>
+
+<th>Details</th>
+
+</tr>
+
+</table>
+
+<br>
+
+<h3>Final Score: /100</h3>
+
+
+<div class="separator"></div>
+
+<div class="footer">
+
+OTIMIZADOR POS ENTERPRISE v3.0.0
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+

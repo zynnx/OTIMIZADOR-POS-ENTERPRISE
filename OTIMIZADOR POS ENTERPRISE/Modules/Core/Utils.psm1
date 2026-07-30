@@ -120,8 +120,8 @@ function Format-Time {
 
     return "{0:00}:{1:00}:{2:00}" -f `
         $Elapsed.Hours,
-        $Elapsed.Minutes,
-        $Elapsed.Seconds
+    $Elapsed.Minutes,
+    $Elapsed.Seconds
 
 }
 
@@ -189,7 +189,7 @@ function Get-ModuleItems {
 
     # Nomes dos módulos (sem extensão) presentes nessa subpasta
     $ModuleNamesInFolder = Get-ChildItem -Path $ModulesPath -Filter "*.psm1" -File |
-        Select-Object -ExpandProperty BaseName
+    Select-Object -ExpandProperty BaseName
 
     $MatchedFunctions = Get-Command -CommandType Function -Name $FunctionPattern -Module $ModuleNamesInFolder -ErrorAction SilentlyContinue
 
@@ -205,21 +205,56 @@ function Get-ModuleItems {
 function New-ModuleResult {
 
     param(
+        [Parameter(Mandatory)]
         [string]$Module,
         [int]$Success = 0,
         [int]$Errors = 0,
         [object[]]$Details = @(),
-        [timespan]$Elapsed
+        [object]$Elapsed = $null
     )
 
-    [PSCustomObject]@{
-        Module    = $Module
-        Date      = Get-Date
-        Success   = $Success
-        Errors    = $Errors
-        Duration  = $Elapsed
-        Details   = $Details
+    return [PSCustomObject]@{
+        Module   = $Module
+        Date     = Get-Date
+        Success  = $Success
+        Errors   = $Errors
+        Duration = if ($Elapsed) {
+            Format-Time $Elapsed
+        }
+        else {
+            "00:00:00"
+        }
+        Details  = $Details
     }
+
+    <# function Show-ExecutionSummary {
+
+        param(
+
+            [string]$Title,
+
+            [int]$Success,
+
+            [int]$Errors,
+
+            [TimeSpan]$Elapsed
+
+        )
+
+        Write-Host ""
+        Write-Host "============================================================" -ForegroundColor Cyan
+        Write-Host (" {0}" -f $Title.ToUpper())
+        Write-Host "============================================================" -ForegroundColor Cyan
+        Write-Host ""
+
+        Write-Host ("Successful : {0}" -f $Success)
+        Write-Host ("Errors     : {0}" -f $Errors)
+        Write-Host ("Time       : {0}" -f (Format-Time $Elapsed))
+
+        Write-Host ""
+        Write-Host "============================================================" -ForegroundColor Cyan
+
+    } #>
 }
 
 Export-ModuleMember -Function *

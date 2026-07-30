@@ -1,34 +1,93 @@
 ﻿#=========================================================
 # OptimizationSection.psm1
+# Windows Optimization report section
 #=========================================================
 
 function Get-OptimizationSection {
 
-    if(-not $Global:App.Results.Optimization){
+    if (-not $Global:App.Results.Optimization) {
 
-        return "<h2>Optimization</h2><p>Not executed.</p><br>"
+        return "<h2>Windows Optimization</h2><p>Not executed.</p><br>"
 
     }
 
     $R = $Global:App.Results.Optimization
 
+    $Status = "ok"
+    $StatusText = "COMPLETED"
+
+    if ($R.Errors -gt 0) {
+
+        $Status = "warn"
+        $StatusText = "WARNING"
+
+    }
+
+    if ($R.Success -eq 0 -and $R.Errors -gt 0) {
+
+        $Status = "error"
+        $StatusText = "ERROR"
+
+    }
+
 @"
 
 <h2>Windows Optimization</h2>
 
-<table>
+<div class="dashboard">
 
-<tr><th>Campo</th><th>Valor</th></tr>
+    <div class="card ok">
 
-<tr><td>Date</td><td>$($R.Date)</td></tr>
+        <div class="card-title">
+            Successful Actions
+        </div>
 
-<tr><td>Sucessos</td><td>$($R.Success)</td></tr>
+        <div class="card-value">
+            $($R.Success)
+        </div>
 
-<tr><td>Errors</td><td>$($R.Errors)</td></tr>
+    </div>
 
-</table>
 
-<br>
+    <div class="card $Status">
+
+        <div class="card-title">
+            Errors
+        </div>
+
+        <div class="card-value">
+            $($R.Errors)
+        </div>
+
+    </div>
+
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Execution Time
+        </div>
+
+        <div class="card-value">
+            $(Format-Time $R.Elapsed)
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="system-status $Status">
+
+    <div class="card-title">
+        Optimization Status
+    </div>
+
+    <div class="status-value">
+        $StatusText
+    </div>
+
+</div>
 
 "@
 

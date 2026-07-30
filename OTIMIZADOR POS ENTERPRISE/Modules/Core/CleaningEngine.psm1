@@ -39,7 +39,7 @@ function Start-Cleaning {
         $TotalBefore += $Item.Size
 
         Write-Host ("{0,-25} {1,10} files {2,12}" -f `
-            $Item.Name,
+                $Item.Name,
             $Item.Files,
             $Item.SizeText)
 
@@ -49,7 +49,7 @@ function Start-Cleaning {
     Write-Host ("Total found : {0}" -f (Convert-Bytes $TotalBefore)) -ForegroundColor Yellow
     Write-Host ""
 
-    $Ok = 0
+    $OK = 0
     $Erro = 0
 
     $Current = 0
@@ -71,7 +71,7 @@ function Start-Cleaning {
 
             Write-Log "$($Item.Name) cleaned." "OK"
 
-            $Ok++
+            $OK++
 
         }
         catch {
@@ -114,7 +114,7 @@ function Start-Cleaning {
         $TotalAfter += $After
 
         Write-Host ("{0,-25} {1,12} -> {2,-12} Recuperado: {3}" -f `
-            $Items[$i].Name,
+                $Items[$i].Name,
             (Convert-Bytes $Before),
             (Convert-Bytes $After),
             (Convert-Bytes $Recovered))
@@ -133,7 +133,7 @@ function Start-Cleaning {
     Write-Host "============================================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host ("Items analyzed : {0}" -f $Items.Count)
-    Write-Host ("Cleanups OK      : {0}" -f $Ok)
+    Write-Host ("Cleanups OK      : {0}" -f $OK)
     Write-Host ("Errors            : {0}" -f $Erro)
     Write-Host ("Space recovered: {0}" -f (Convert-Bytes $RecoveredTotal))
     Write-Host ("Tempo            : {0}" -f (Format-Time $Elapsed))
@@ -142,16 +142,16 @@ function Start-Cleaning {
 
     Write-Log ("Space recovered: {0}" -f (Convert-Bytes $RecoveredTotal)) "OK"
 
+    $Global:App.Results.Cleaning = [PSCustomObject]@{
+        Date           = Get-Date
+        Items          = $Items.Count
+        Success        = $OK
+        Errors         = $Erro
+        SpaceRecovered = $RecoveredTotal
+        Elapsed        = $Elapsed
+    }
+        
     Pause-App
-
-}
-
-$Global:App.Results.Cleaning = [PSCustomObject]@{
-    Date = Get-Date
-    SpaceRecovered = $RecoveredTotal
-    Items = $Items.Count
-    Success = $Ok
-    Errors = $Erro
 }
 
 Export-ModuleMember -Function *

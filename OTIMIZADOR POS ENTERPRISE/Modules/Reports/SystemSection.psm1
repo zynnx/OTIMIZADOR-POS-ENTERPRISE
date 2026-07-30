@@ -1,34 +1,85 @@
 ﻿#=========================================================
 # SystemSection.psm1
+# System information report section
 #=========================================================
 
 function Get-SystemSection {
 
     $Info = Get-SystemInfo
+    $DiskStatus = "ok"
 
-@"
+    if ([double]$Info.DiskFree -lt 10) {
 
-<h2>Sistema</h2>
+        $DiskStatus = "error"
 
-<table>
+    }
+    elseif ([double]$Info.DiskFree -lt 20) {
 
-<tr><th>Campo</th><th>Valor</th></tr>
+        $DiskStatus = "warn"
 
-<tr><td>Computer</td><td>$($Info.ComputerName)</td></tr>
+    }
+    #---------------------------------------------------------
+    # Overall system status
+    #---------------------------------------------------------
 
-<tr><td>Windows</td><td>$($Info.Windows)</td></tr>
+    $SystemStatus = "HEALTHY"
 
-<tr><td>Build</td><td>$($Info.Build)</td></tr>
+    if ($DiskStatus -eq "error") {
 
-<tr><td>CPU</td><td>$($Info.CPU)</td></tr>
+        $SystemStatus = "CRITICAL"
 
-<tr><td>RAM</td><td>$($Info.RAM) GB</td></tr>
+    }
+    elseif ($DiskStatus -eq "warn") {
 
-<tr><td>Free Disk</td><td>$($Info.DiskFree) GB</td></tr>
+        $SystemStatus = "WARNING"
 
-<tr><td>Uptime</td><td>$($Info.Uptime)</td></tr>
+    }
 
-</table>
+    @"
+    
+<div class="system-status $DiskStatus">
+
+    <div class="card-title">Overall System Status</div>
+
+    <div class="status-value">$SystemStatus</div>
+
+</div>
+
+<h2>System Information</h2>
+
+<div class="dashboard">
+
+    <div class="card">
+        <div class="card-title">Computer</div>
+        <div class="card-value">$($Info.ComputerName)</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Windows</div>
+        <div class="card-value">$($Info.Windows)</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">CPU</div>
+        <div class="card-value">$($Info.CPU)</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">RAM</div>
+        <div class="card-value">$($Info.RAM) GB</div>
+    </div>
+
+    <div class="card $DiskStatus">
+        <div class="card-title">Free Disk</div>
+        <div class="card-value">$($Info.DiskFree) GB</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Uptime</div>
+        <div class="card-value">$($Info.Uptime)</div>
+    </div>
+
+</div>
 
 <br>
 
