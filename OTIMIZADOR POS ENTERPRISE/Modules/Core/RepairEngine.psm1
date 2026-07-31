@@ -19,6 +19,9 @@ function Start-Repair {
 
     $Watch = Start-Stopwatch
 
+    Write-Log "============================================================"
+    Write-Log "WINDOWS REPAIR STARTED" "INFO"
+
     $Global:App.Results.Repair = [PSCustomObject]@{
         Date    = Get-Date
         Success = 0
@@ -125,6 +128,10 @@ function Start-Repair {
         -Completed
 
     $Elapsed = Stop-Stopwatch $Watch
+
+    Write-Log "WINDOWS REPAIR FINISHED" "OK"
+    Write-Log ("Windows Repair elapsed time: {0}" -f (Format-Time $Elapsed)) "OK"
+    Write-Log "============================================================"
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan

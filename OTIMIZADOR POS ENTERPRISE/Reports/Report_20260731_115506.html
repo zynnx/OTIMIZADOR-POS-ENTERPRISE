@@ -1,0 +1,1309 @@
+﻿<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="utf-8">
+
+<title>OTIMIZADOR POS ENTERPRISE</title>
+
+<style>
+
+body{
+
+    font-family:Segoe UI,Arial;
+    background:#f4f4f4;
+    margin:30px;
+
+}
+:root{
+
+    --primary:#005a9e;
+    --success:#2e7d32;
+    --warning:#f9a825;
+    --danger:#c62828;
+    --light:#f5f7fa;
+    --border:#d9dee5;
+
+}
+.container{
+
+    max-width:1400px;
+    margin:auto;
+    background:white;
+    border-radius:12px;
+    padding:30px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+h1{
+
+    margin:0;
+    color:var(--primary);
+    font-size:34px;
+
+}
+
+.subtitle{
+
+    color:#666;
+    margin-bottom:25px;
+
+}
+
+h2{
+
+    border-bottom:1px solid #ddd;
+    padding-bottom:5px;
+
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+td,th{
+
+    border:1px solid #ddd;
+    padding:8px;
+
+}
+
+th{
+
+    background:#efefef;
+
+}
+
+.ok{
+
+    color:green;
+    font-weight:bold;
+
+}
+
+.warn{
+
+    color:orange;
+    font-weight:bold;
+
+}
+
+.error{
+
+    color:red;
+    font-weight:bold;
+
+}
+
+.footer{
+
+    margin-top:40px;
+    color:#777;
+    font-size:12px;
+
+}
+
+    .separator{
+
+    height:2px;
+    background:#ececec;
+    margin:25px 0;
+
+}
+/*---------------------------------------------------------
+  Dashboard Cards
+---------------------------------------------------------*/
+
+.dashboard{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+    margin:25px 0;
+
+}
+
+.card{
+
+    background:var(--light);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px;
+
+}
+
+.card-title{
+
+    font-size:12px;
+    color:#666;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-bottom:8px;
+
+}
+
+.card-value{
+
+    font-size:20px;
+    font-weight:600;
+    color:#222;
+
+}
+.card.ok{
+    border-left:5px solid var(--success);
+}
+
+.card.warn{
+    border-left:5px solid var(--warning);
+}
+
+.card.error{
+    border-left:5px solid var(--danger);
+}
+
+.system-status{
+
+    padding:20px;
+    margin:20px 0 25px 0;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--light);
+
+}
+
+.system-status.ok{
+
+    border-left:6px solid var(--success);
+
+}
+
+.system-status.warn{
+
+    border-left:6px solid var(--warning);
+
+}
+
+.system-status.error{
+
+    border-left:6px solid var(--danger);
+
+}
+
+.status-value{
+
+    font-size:28px;
+    font-weight:700;
+    margin-top:5px;
+
+}
+
+/*=========================================================
+Enterprise Dashboard
+=========================================================*/
+
+.dashboard-grid{
+
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+margin:20px 0 30px 0;
+
+
+}
+
+.dashboard-card{
+
+
+border:1px solid var(--border);
+border-radius:12px;
+padding:20px;
+background:white;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+
+
+}
+
+.dashboard-card-title{
+
+
+color:#666;
+font-size:13px;
+font-weight:600;
+text-transform:uppercase;
+margin-bottom:8px;
+
+
+}
+
+.dashboard-card-value{
+
+
+font-size:26px;
+font-weight:700;
+
+
+}
+
+.dashboard-card.ok{
+
+
+border-top:5px solid var(--success);
+
+
+}
+
+.dashboard-card.warn{
+
+
+border-top:5px solid var(--warning);
+
+
+}
+
+.dashboard-card.error{
+
+
+border-top:5px solid var(--danger);
+
+
+}
+
+.dashboard-card.info{
+
+
+border-top:5px solid var(--primary);
+
+
+}
+
+@media(max-width:1200px){
+
+    .container{
+
+        margin:20px;
+
+    }
+
+    .dashboard-grid{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:700px){
+
+    body{
+
+        margin:10px;
+
+    }
+
+    .container{
+
+        margin:0;
+        padding:18px;
+        border-radius:8px;
+
+    }
+
+    h1{
+
+        font-size:26px;
+
+    }
+
+    .dashboard-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    table{
+
+        font-size:13px;
+
+    }
+
+    td,th{
+
+        padding:6px;
+
+    }
+
+}
+}
+
+/*=========================================================
+Diagnostic Score Bar
+=========================================================*/
+.score-bar{
+
+    width:100%;
+    height:14px;
+    background:#e5e7eb;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:12px;
+
+}
+
+.score-bar-fill{
+
+    height:100%;
+    border-radius:10px;
+    transition:width .3s ease;
+
+}
+
+.score-ok{
+
+    background:var(--success);
+
+}
+
+.score-good{
+
+    background:#66bb6a;
+
+}
+
+.score-warning{
+
+    background:var(--warning);
+
+}
+
+.score-critical{
+
+    background:var(--danger);
+
+}
+
+.score-label{
+
+    margin-top:6px;
+    font-size:12px;
+    color:#666;
+
+}
+
+.table-wrapper{
+
+    width:100%;
+    overflow-x:auto;
+
+}
+
+.dashboard-system-info{
+
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin:0 0 25px 0;
+
+}
+
+.dashboard-system-info > div{
+
+    background:var(--light);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:12px 15px;
+
+}
+
+.dashboard-system-info strong{
+
+    display:block;
+    font-size:11px;
+    color:#666;
+    text-transform:uppercase;
+    margin-bottom:4px;
+
+}
+
+.dashboard-system-info span{
+
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    word-break:break-word;
+
+}
+
+@media(max-width:1000px){
+
+    .dashboard-system-info{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:600px){
+
+    .dashboard-system-info{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+    .report-meta{
+
+    display:flex;
+    gap:12px;
+    margin:15px 0 20px 0;
+
+}
+
+.report-meta > div{
+
+    background:var(--light);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 15px;
+
+}
+
+.report-meta strong{
+
+    display:block;
+    font-size:11px;
+    color:#666;
+    text-transform:uppercase;
+    margin-bottom:3px;
+
+}
+
+.report-meta span{
+
+    font-size:13px;
+    font-weight:600;
+
+}
+
+@media(max-width:600px){
+
+    .report-meta{
+
+        flex-direction:column;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>OTIMIZADOR POS ENTERPRISE</h1>
+
+<div class="subtitle">Enterprise Maintenance Report</div>
+
+<div class="report-meta">
+
+    <div>
+        <strong>Generated</strong>
+        <span>31-07-2026 11:55:06</span>
+    </div>
+
+    <div>
+        <strong>Optimizer Version</strong>
+        <span>v3.0.7</span>
+    </div>
+
+</div>
+
+
+<div class="separator"></div>
+
+    
+<div class="system-status ok">
+
+    <div class="card-title">Overall System Status</div>
+
+    <div class="status-value">HEALTHY</div>
+
+</div>
+
+<h2>System Information</h2>
+
+<div class="dashboard">
+
+    <div class="card">
+        <div class="card-title">Computer</div>
+        <div class="card-value">DESKTOP-UV20AH8</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Windows</div>
+        <div class="card-value">Microsoft Windows 10 Pro</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">CPU</div>
+        <div class="card-value">Intel(R) Core(TM) i5-9500 CPU @ 3.00GHz</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">RAM</div>
+        <div class="card-value">7.95 GB</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Free Disk</div>
+        <div class="card-value">476.52 GB</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Uptime</div>
+        <div class="card-value">0 dias 18 horas 14 minutos</div>
+    </div>
+
+</div>
+
+<br>
+
+
+<h2>System Overview</h2>
+
+<div class="dashboard-system-info">
+
+    <div>
+        <strong>Computer</strong>
+        <span>DESKTOP-UV20AH8</span>
+    </div>
+
+    <div>
+        <strong>Windows</strong>
+        <span>Microsoft Windows 10 Pro</span>
+    </div>
+
+    <div>
+        <strong>Build</strong>
+        <span>19045</span>
+    </div>
+
+    <div>
+        <strong>CPU</strong>
+        <span>Intel(R) Core(TM) i5-9500 CPU @ 3.00GHz</span>
+    </div>
+
+    <div>
+        <strong>RAM</strong>
+        <span>7.95 GB</span>
+    </div>
+
+    <div>
+        <strong>Free Disk</strong>
+        <span>476.52 GB</span>
+    </div>
+
+    <div>
+        <strong>Uptime</strong>
+        <span>0 dias 18 horas 14 minutos</span>
+    </div>
+
+</div>
+
+<div class="system-status ok">
+
+    <div>
+        <strong>Overall System Status</strong>
+    </div>
+
+    <div class="status-value">
+        GOOD
+    </div>
+
+    <div>
+        Diagnostic Score:
+        <strong>82 / 100</strong>
+    </div>
+
+</div>
+
+<div class="dashboard-grid">
+
+    <div class="dashboard-card ok">
+
+        <div class="dashboard-card-title">
+            System Diagnostic
+        </div>
+
+        <div class="dashboard-card-value">
+            82 / 100
+        </div>
+
+        <div>
+            Status:
+            <strong>GOOD</strong>
+        </div>
+        <div class="score-bar">
+            <div class="score-bar-fill score-good"
+                style="width:82%;">
+            </div>
+        </div>
+
+        <div class="score-label">
+            System Health Score: 82 / 100
+        </div>
+
+        <div style="margin-top:10px;">
+            Checks:
+            <strong>8</strong>
+        </div>
+
+        <div>
+            <span class="ok">
+                OK: 5
+            </span>
+
+            &nbsp; | &nbsp;
+
+            <span class="warn">
+                Warnings: 2
+            </span>
+
+            &nbsp; | &nbsp;
+
+            <span class="error">
+                Critical: 1
+            </span>
+
+            &nbsp; | &nbsp;
+
+            <span class="error">
+                Errors: 0
+            </span>
+    </div>
+</div>
+
+<div class="dashboard-card ok">
+    <div class="dashboard-card-title">
+        Smart Cleaning
+    </div>
+
+    <div class="dashboard-card-value">
+        EXECUTED
+    </div>
+
+    <div>
+        Items: <strong>6</strong>
+    </div>
+
+    <div>
+        Recovered:
+    <strong>3,14 MB</strong>
+    </div>
+</div>
+
+
+
+<div class="dashboard-card ok">
+    <div class="dashboard-card-title">
+        Windows Optimization
+    </div>
+    <div class="dashboard-card-value">
+        EXECUTED
+    </div>
+    <div>
+        Successful:
+        <strong>5</strong>
+    </div>
+    <div>
+        Errors:
+        <strong>0</strong>
+    </div>
+</div>
+
+<div class="dashboard-card ok">
+    <div class="dashboard-card-title">
+        Windows Repair
+    </div>
+
+    <div class="dashboard-card-value">
+        EXECUTED
+    </div>
+
+    <div>
+        Successful:
+        <strong>6</strong>
+    </div>
+
+    <div>
+        Errors:
+        <strong>0</strong>
+    </div>
+    <div>
+        Time:
+        <strong>N/A</strong>
+    </div>
+</div>
+
+</div>
+
+<table>
+
+<tr>
+    <th>Module</th>
+    <th>Status</th>
+</tr>
+
+<tr>
+    <td>System Diagnostic</td>
+    <td class="ok">
+        GOOD
+    </td>
+</tr>
+
+<tr>
+    <td>Smart Cleaning</td>
+    <td>EXECUTED</td>
+</tr>
+
+<tr>
+    <td>Windows Optimization</td>
+    <td>EXECUTED</td>
+</tr>
+
+<tr>
+    <td>Windows Repair</td>
+    <td>EXECUTED</td>
+</tr>
+
+</table>
+
+<br>
+
+
+<h2>Smart Cleaning</h2>
+
+<div class="dashboard">
+
+    <div class="card ok">
+        <div class="card-title">Items Analyzed</div>
+        <div class="card-value">6</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Cleanups Successful</div>
+        <div class="card-value">6</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Errors</div>
+        <div class="card-value">0</div>
+    </div>
+
+    <div class="card ok">
+        <div class="card-title">Space Recovered</div>
+        <div class="card-value">3,14 MB</div>
+    </div>
+
+</div>
+
+<div class="system-status ok">
+
+    <div class="card-title">Cleaning Status</div>
+
+    <div class="status-value">COMPLETED</div>
+
+</div>
+
+
+<h2>Windows Optimization</h2>
+
+<div class="dashboard">
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Successful Actions
+        </div>
+
+        <div class="card-value">
+            5
+        </div>
+
+    </div>
+
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Errors
+        </div>
+
+        <div class="card-value">
+            0
+        </div>
+
+    </div>
+
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Execution Time
+        </div>
+
+        <div class="card-value">
+            00:00:05
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="system-status ok">
+
+    <div class="card-title">
+        Optimization Status
+    </div>
+
+    <div class="status-value">
+        COMPLETED
+    </div>
+
+</div>
+
+
+<h2>Windows Repair</h2>
+
+<div class="dashboard">
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Repairs Successful
+        </div>
+
+        <div class="card-value">
+            6
+        </div>
+
+    </div>
+
+    <div class="card ok">
+
+        <div class="card-title">
+            Errors
+        </div>
+
+        <div class="card-value">
+            0
+        </div>
+
+    </div>
+
+</div>
+
+<div class="system-status ok">
+
+    <div class="card-title">
+        Repair Status
+    </div>
+
+    <div class="status-value">
+        COMPLETED
+    </div>
+
+</div>
+
+<h3>Repair Details</h3>
+
+<table>
+
+<tr>
+    <th>Repair</th>
+    <th>Status</th>
+    <th>Execution Time</th>
+</tr>
+
+<tr>
+
+    <td>
+        CHKDSK
+    </td>
+
+    <td class="ok">
+        OK
+    </td>
+
+    <td class="warn">
+        00:03:16
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Component Store
+    </td>
+
+    <td class="ok">
+        OK
+    </td>
+
+    <td class="ok">
+        00:00:03
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        DISM RestoreHealth
+    </td>
+
+    <td class="ok">
+        OK
+    </td>
+
+    <td class="error">
+        00:08:24
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Microsoft Store
+    </td>
+
+    <td class="ok">
+        OK
+    </td>
+
+    <td class="ok">
+        00:00:09
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Windows System Repair
+    </td>
+
+    <td class="ok">
+        OK
+    </td>
+
+    <td class="error">
+        00:05:10
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Windows Update
+    </td>
+
+    <td class="ok">
+        OK
+    </td>
+
+    <td class="ok">
+        00:00:02
+    </td>
+
+</tr>
+
+</table>
+
+<br>
+
+
+
+<h2>System Diagnostic</h2>
+
+<div class="system-status ok">
+
+
+<div>
+    <strong>Overall System Status</strong>
+</div>
+
+<div class="status-value">
+    GOOD
+</div>
+
+<div>
+    Diagnostic Score: <strong>82 / 100</strong>
+</div>
+
+</div>
+
+<table>
+
+<tr>
+    <th>Total Checks</th>
+    <th>OK</th>
+    <th>Warnings</th>
+    <th>Critical</th>
+    <th>Errors</th>
+</tr>
+
+<tr>
+    <td>8</td>
+    <td class="ok">5</td>
+    <td class="warn">2</td>
+    <td class="error">1</td>
+    <td class="error">0</td>
+</tr>
+
+</table>
+
+<br>
+
+<h3>Diagnostic Details</h3>
+
+<table>
+
+<tr>
+    <th>Component</th>
+    <th>Status</th>
+    <th>Score</th>
+    <th>Details</th>
+    <th>Recommendation</th>
+</tr>
+
+<tr>
+
+<td><strong>CPU</strong></td>
+
+<td class="ok">
+    OK
+</td>
+
+<td>
+    100 / 100
+</td>
+
+<td>
+    Intel(R) Core(TM) i5-9500 CPU @ 3.00GHz | 6 Cores | 6 Threads | 3 GHz | Average usage: 0%
+</td>
+
+<td>
+    
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Defender</strong></td>
+
+<td class="error">
+    CRITICAL
+</td>
+
+<td>
+    20 / 100
+</td>
+
+<td>
+    Real-time protection is disabled.
+</td>
+
+<td>
+    Enable Microsoft Defender real-time protection.
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Disk</strong></td>
+
+<td class="ok">
+    OK
+</td>
+
+<td>
+    100 / 100
+</td>
+
+<td>
+    476,54 GB free of 953,24 GB (50%). Used: 476,69 GB.
+</td>
+
+<td>
+    
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Firewall</strong></td>
+
+<td class="warn">
+    WARNING
+</td>
+
+<td>
+    70 / 100
+</td>
+
+<td>
+    Firewall enabled on 1/3 profiles. Disabled: Private, Public.
+</td>
+
+<td>
+    Review the disabled firewall profiles.
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>RAM</strong></td>
+
+<td class="warn">
+    WARNING
+</td>
+
+<td>
+    70 / 100
+</td>
+
+<td>
+    6,81 GB used of 7,95 GB (86%). Free: 1,14 GB.
+</td>
+
+<td>
+    Close unnecessary applications and monitor memory usage.
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Services</strong></td>
+
+<td class="ok">
+    OK
+</td>
+
+<td>
+    100 / 100
+</td>
+
+<td>
+    All required Windows services are running.
+</td>
+
+<td>
+    
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>SMART</strong></td>
+
+<td class="ok">
+    OK
+</td>
+
+<td>
+    100 / 100
+</td>
+
+<td>
+    SMART disk status is healthy. 1 physical disk(s) checked.
+</td>
+
+<td>
+    
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Windows</strong></td>
+
+<td class="ok">
+    OK
+</td>
+
+<td>
+    100 / 100
+</td>
+
+<td>
+    Microsoft Windows 10 Pro | Build 19045 | Version 10.0.19045 | Uptime: 0 days, 18 hours, 14 minutes
+</td>
+
+<td>
+    
+</td>
+
+</tr>
+
+</table>
+
+<br>
+
+<h3>Recommendations</h3>
+
+<div class="system-status warn">
+
+<div style="margin:8px 0;">
+    <strong>Defender:</strong>
+    Enable Microsoft Defender real-time protection.
+</div>
+
+<div style="margin:8px 0;">
+    <strong>Firewall:</strong>
+    Review the disabled firewall profiles.
+</div>
+
+<div style="margin:8px 0;">
+    <strong>RAM:</strong>
+    Close unnecessary applications and monitor memory usage.
+</div>
+
+</div>
+
+
+<div class="separator"></div>
+
+<div class="footer">
+
+OTIMIZADOR POS ENTERPRISE v3.0.7
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+

@@ -19,6 +19,9 @@ function Start-Cleaning {
 
     $Watch = Start-Stopwatch
 
+    Write-Log "============================================================"
+    Write-Log "SMART CLEANING STARTED" "INFO"
+
     $Items = Get-CleaningItems
 
     if ($Items.Count -eq 0) {
@@ -150,7 +153,10 @@ function Start-Cleaning {
         SpaceRecovered = $RecoveredTotal
         Elapsed        = $Elapsed
     }
-        
+    Write-Log "SMART CLEANING FINISHED" "OK"
+    Write-Log ("Smart Cleaning elapsed time: {0}" -f (Format-Time $Elapsed)) "OK"
+    Write-Log "============================================================"
+    
     Pause-App
 }
 

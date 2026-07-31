@@ -9,14 +9,14 @@
 
 $ErrorActionPreference = "Stop"
 
-$Script:Version = "3.0.7"
+$Script:Version = "3.0.0"
 
 $Global:AppRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $Global:App = @{
 
     Root    = Split-Path -Parent $MyInvocation.MyCommand.Path
-    Version = "3.0.7"
+    Version = "3.0.0"
     Config  = $null
     LogFile = $null
     Results = @{}

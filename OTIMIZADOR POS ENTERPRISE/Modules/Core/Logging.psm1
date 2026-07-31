@@ -25,11 +25,17 @@ function Start-Log {
         -Path $Global:App.LogFile `
         -Force | Out-Null
 
-    Write-Log "============================================="
-    Write-Log "Otimizador POS $($Global:App.Version)"
-    Write-Log "Computador : $env:COMPUTERNAME"
-    Write-Log "Utilizador : $env:USERNAME"
-    Write-Log "============================================="
+    Write-Log "============================================================"
+    Write-Log "OTIMIZADOR POS ENTERPRISE"
+    Write-Log "============================================================"
+    Write-Log "Version     : $($Global:App.Version)"
+    Write-Log "Computer    : $env:COMPUTERNAME"
+    Write-Log "User        : $env:USERNAME"
+    Write-Log "PowerShell  : $($PSVersionTable.PSVersion)"
+    Write-Log "Windows     : $([Environment]::OSVersion.Version)"
+    Write-Log "Start       : $(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')"
+    Write-Log "Log file    : $Global:App.LogFile"
+    Write-Log "============================================================"
 
 }
 

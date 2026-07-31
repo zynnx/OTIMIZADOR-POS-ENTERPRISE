@@ -17,6 +17,9 @@ function Start-Diagnostic {
 
     $Watch = Start-Stopwatch
 
+    Write-Log "============================================================"
+    Write-Log "SYSTEM DIAGNOSTIC STARTED" "INFO"
+
     $Items = Get-DiagnosticItems
 
     if ($Items.Count -eq 0) {
@@ -213,6 +216,9 @@ function Start-Diagnostic {
     ).Count
 
     $Elapsed = Stop-Stopwatch $Watch
+    Write-Log "SYSTEM DIAGNOSTIC FINISHED" "OK"
+    Write-Log ("System Diagnostic elapsed time: {0}" -f (Format-Time $Elapsed)) "OK"
+    Write-Log "============================================================"
 
     Write-Host ""
     Write-Host ("Time : {0}" -f (Format-Time $Elapsed))

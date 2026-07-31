@@ -17,6 +17,9 @@ function Start-Optimization {
 
     $Watch = Start-Stopwatch
 
+    Write-Log "============================================================"
+    Write-Log "WINDOWS OPTIMIZATION STARTED" "INFO"
+
     $Items = Get-OptimizationItems
 
     if ($Items.Count -eq 0) {
@@ -90,7 +93,12 @@ function Start-Optimization {
         -Activity "Windows Optimization" `
         -Completed
 
+    
     $Elapsed = Stop-Stopwatch $Watch
+    Write-Log "WINDOWS OPTIMIZATION FINISHED" "OK"
+    Write-Log ("Windows Optimization elapsed time: {0}" -f (Format-Time $Elapsed)) "OK"
+    Write-Log "============================================================"
+
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
@@ -116,7 +124,6 @@ function Start-Optimization {
     Pause-App
 
 }
-
 
 Export-ModuleMember -Function *
 
