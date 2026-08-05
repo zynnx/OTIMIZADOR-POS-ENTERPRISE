@@ -115,8 +115,10 @@ function Write-Section {
 
 function Stop-Log {
 
-    Write-Log ""
-    Write-Log "Execution finished."
+    Write-Log "============================================================"
+    Write-Log "APPLICATION CLOSED" "OK"
+    Write-Log ("End : {0}" -f (Get-Date -Format "dd/MM/yyyy HH:mm:ss"))
+    Write-Log "============================================================"
 
 }
 

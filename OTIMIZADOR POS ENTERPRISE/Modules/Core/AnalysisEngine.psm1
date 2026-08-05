@@ -118,7 +118,7 @@ function Start-CompleteAnalysis {
     Write-Host ""
 
     Write-Log "Complete analysis finished." "OK"
-
+    $Global:App.AutomaticMode = $false
     Pause-App
 }
 

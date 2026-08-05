@@ -43,8 +43,6 @@ function Show-Menu {
     Write-Host ("=" * 70) -ForegroundColor DarkGray
 }
 function Write-ExecutionSummary {
-
-    Write-Log ""
     Write-Log "============================================================"
     Write-Log "EXECUTION SUMMARY"
     Write-Log "============================================================"
@@ -111,7 +109,6 @@ function Start-MainMenu {
                 Start-Inventory
             }
             "0" {
-                Stop-Log   
                 break
             }
             default {

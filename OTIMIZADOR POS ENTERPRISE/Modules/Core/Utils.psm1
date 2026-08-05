@@ -46,8 +46,17 @@ function Show-Header {
 #---------------------------------------------------------
 
 function Pause-App {
+
+    if ($Global:App.AutomaticMode) {
+
+        return
+
+    }
+
     Write-Host ""
-    Read-Host "Prima ENTER para continuar"
+
+    Read-Host "Press ENTER to continue"
+
 }
 
 #---------------------------------------------------------
