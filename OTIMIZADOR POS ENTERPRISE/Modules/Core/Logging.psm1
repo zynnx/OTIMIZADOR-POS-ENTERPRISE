@@ -5,7 +5,30 @@
 
 function Start-Log {
 
-    $LogFolder = "C:\Logs\MeusLogs"
+    #
+    # Prefer the application Logs folder; fall back to C:\Logs\MeusLogs
+    # when the app folder is not writable.
+    #
+
+    $LogFolder = Join-Path $Global:AppRoot "Logs"
+
+    try {
+
+        if (-not (Test-Path $LogFolder)) {
+
+            New-Item `
+                -ItemType Directory `
+                -Path $LogFolder `
+                -Force | Out-Null
+
+        }
+
+    }
+    catch {
+
+        $LogFolder = "C:\Logs\MeusLogs"
+
+    }
 
     if (!(Test-Path $LogFolder)) {
 

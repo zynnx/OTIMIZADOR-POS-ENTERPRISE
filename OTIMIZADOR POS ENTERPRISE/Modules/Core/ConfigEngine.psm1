@@ -2,6 +2,10 @@
 # ConfigEngine.psm1
 #=========================================================
 
+if ($null -eq $Global:App) {
+    $Global:App = @{}
+}
+
 $Global:App.Config = @{}
 
 function Load-Config {

@@ -11,7 +11,7 @@ function Get-POSSoftwareInventory {
 
     $Software = @()
 
-    $SearchList = @(
+    $DefaultSearchList = @(
 
         "SQL Server",
         "SQL Server Express",
@@ -29,6 +29,32 @@ function Get-POSSoftwareInventory {
         "XD"
 
     )
+
+    $SearchList = $DefaultSearchList
+
+    #
+    # Config\SoftwareDetection.json (loaded by Load-Config) can override the list
+    #
+
+    $DetectionConfig = $null
+
+    if ($Global:App.Config -and $Global:App.Config.SoftwareDetection) {
+
+        $DetectionConfig = $Global:App.Config.SoftwareDetection
+
+    }
+
+    if ($DetectionConfig -and $DetectionConfig.Software) {
+
+        $ConfigList = @($DetectionConfig.Software)
+
+        if ($ConfigList.Count -gt 0) {
+
+            $SearchList = $ConfigList
+
+        }
+
+    }
 
     foreach ($Search in $SearchList) {
 

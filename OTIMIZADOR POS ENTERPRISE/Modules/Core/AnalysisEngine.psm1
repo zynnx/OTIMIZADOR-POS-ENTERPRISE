@@ -7,7 +7,7 @@ function Start-CompleteAnalysis {
 
     $Global:App.AutomaticMode = $true
     
-    Show-Header
+    Show-Header "COMPLETE SYSTEM ANALYSIS"
 
     Write-Log "Starting complete analysis." "INFO"
 
@@ -16,6 +16,27 @@ function Start-CompleteAnalysis {
     Write-Host "             COMPLETE SYSTEM ANALYSIS" -ForegroundColor Yellow
     Write-Host "============================================================" -ForegroundColor Cyan
     Write-Host ""
+
+    #
+    # Restore point (enabled by default, can be disabled in Config\Config.json)
+    #
+
+    $CreatePoint = $true
+
+    if ($Global:Config -and $null -ne $Global:Config.CreateRestorePoint) {
+        $CreatePoint = [bool]$Global:Config.CreateRestorePoint
+    }
+
+    if ($CreatePoint) {
+
+        Write-Host "Creating a restore point before the maintenance..." -ForegroundColor Cyan
+        Write-Host ""
+        New-RestorePointSafe -Description ("Otimizador POS - {0}" -f (Get-Date -Format "yyyy-MM-dd HH:mm"))
+        Write-Host ""
+
+    }
+
+    try {
 
     #
     # 1 - SMART CLEANING
@@ -110,6 +131,12 @@ function Start-CompleteAnalysis {
     #
     # FINISHED
     #
+    }
+    finally {
+
+        $Global:App.AutomaticMode = $false
+
+    }
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Green
@@ -118,7 +145,6 @@ function Start-CompleteAnalysis {
     Write-Host ""
 
     Write-Log "Complete analysis finished." "OK"
-    $Global:App.AutomaticMode = $false
     Pause-App
 }
 

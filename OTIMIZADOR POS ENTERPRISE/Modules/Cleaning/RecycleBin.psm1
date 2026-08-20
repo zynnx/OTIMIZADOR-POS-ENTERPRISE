@@ -66,18 +66,60 @@ function Invoke-RecycleBinCleanup {
     }
     catch {
 
-        Write-Log "Clear-RecycleBin failed. Trying manual cleanup..." "WARNING"
+        Write-Log "Clear-RecycleBin failed: $($_.Exception.Message). Trying manual cleanup..." "WARNING"
 
     }
 
     #
-    # Second attempt
+    # Manual fallback: remove the S-* user folders of $Recycle.Bin on each drive
     #
-    # We keep Recycle Bin cleanup only on the safest path.
-    # No need to touch other system areas.
 
-    Write-Log "Manual Recycle Bin cleanup completed." "OK"
+    $Cleaned = 0
+    $Failed = 0
 
+    $Drives = Get-PSDrive -PSProvider FileSystem -ErrorAction SilentlyContinue
+
+    foreach ($Drive in $Drives) {
+
+        $Recycle = Join-Path $Drive.Root '$Recycle.Bin'
+
+        if (Test-Path $Recycle) {
+
+            $UserFolders = Get-ChildItem -Path $Recycle -Directory -Force -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -like "S-*" }
+
+            foreach ($Folder in $UserFolders) {
+
+                try {
+
+                    Remove-Item -Path $Folder.FullName -Recurse -Force -ErrorAction Stop
+                    $Cleaned++
+
+                }
+                catch {
+
+                    $Failed++
+
+                }
+
+            }
+
+        }
+
+    }
+
+    Write-Log "Manual cleanup: $Cleaned folder(s) removed, $Failed ignored." "INFO"
+
+    if ($Failed -gt 0) {
+
+        Write-Log "Some Recycle Bin items could not be removed." "WARNING"
+
+    }
+    else {
+
+        Write-Log "Manual Recycle Bin cleanup completed." "OK"
+
+    }
 }
 
 Export-ModuleMember -Function *

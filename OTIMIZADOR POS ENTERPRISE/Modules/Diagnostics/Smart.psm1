@@ -13,7 +13,7 @@ function Get-SmartDiagnostic {
 
 #---------------------------------------------------------
 
-function Invoke-SMARTDiagnostic {
+function Invoke-SmartDiagnostic {
 
     try {
         $Disks = @(

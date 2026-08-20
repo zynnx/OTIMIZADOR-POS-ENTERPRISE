@@ -51,10 +51,22 @@ function Start-Report {
     Write-Host ""
 
     #
-    # Open automatically
+    # Open automatically (can be disabled in Config\Report.json)
     #
 
-    if (Test-Path $File) {
+    $OpenAutomatically = $true
+
+    $ReportConfig = $null
+
+    if ($Global:App.Config -and $Global:App.Config.Report) {
+        $ReportConfig = $Global:App.Config.Report
+    }
+
+    if ($ReportConfig -and $null -ne $ReportConfig.OpenAutomatically) {
+        $OpenAutomatically = [bool]$ReportConfig.OpenAutomatically
+    }
+
+    if ($OpenAutomatically -and (Test-Path $File)) {
 
         Start-Process $File
 

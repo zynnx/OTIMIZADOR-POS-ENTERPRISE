@@ -5,17 +5,20 @@
 
 function Get-PowerPlanStatus {
 
+    $HighPerfGuid = "8c5e7fda-e8f1-4140-ba8b-d5943ac5b513"
     $Status = "Unknown"
 
     try {
 
         $Output = powercfg /L
+        $Current = @($Output | Where-Object { $_ -match "\*" })
 
-        $Current = ($Output | Where-Object { $_ -match "\*" })
+        if ($Current -and $Current[0]) {
 
-        if ($Current) {
-
-            if ($Current -match "(?i)High performance|Alto desempenho|Elevado desempenho") {
+            if (
+                $Current[0] -match [regex]::Escape($HighPerfGuid) -or
+                $Current[0] -match "(?i)High performance|Alto desempenho|Elevado desempenho"
+            ) {
 
                 $Status = "Optimized"
 
@@ -53,58 +56,88 @@ function Invoke-PowerPlanOptimization {
 
     Write-Log "Checking power plans..." "INFO"
 
-    $Plans = powercfg /L
+    $HighPerfGuid = "8c5e7fda-e8f1-4140-ba8b-d5943ac5b513"
+    $BalancedGuid = "381b4222-66ff-4d2a-bd2b-b62fb208479a"
 
     #
-    # Search for High Performance
+    # 1) Try to enable the built-in High Performance scheme (GUID).
+    #    On Windows 10/11 this scheme exists even when it is hidden in the list.
     #
 
-    $High = $Plans | Where-Object {
+    $Activated = $false
 
-        $_ -match "(?i)High performance|Alto desempenho|Elevado desempenho"
+    try {
+
+        powercfg /s $HighPerfGuid 2>&1 | Out-Null
+
+        if ($LASTEXITCODE -eq 0) {
+            $Activated = $true
+        }
+
+    }
+    catch {
+        # continue to the next attempt
+    }
+
+    if ($Activated) {
+
+        Write-Log "High Performance plan activated." "OK"
+        return
 
     }
 
-    if (-not $High) {
+    #
+    # 2) If it does not exist, duplicate the Balanced scheme and
+    #    activate the newly created scheme (the last GUID in the list).
+    #
 
-        Write-Log "High Performance plan not found." "WARNING"
+    Write-Log "High Performance plan not found. Creating a new scheme..." "INFO"
 
-        Write-Log "Creating High Performance plan..." "INFO"
+    try {
 
-        powercfg -duplicatescheme SCHEME_MIN | Out-Null
+        powercfg -duplicatescheme $BalancedGuid | Out-Null
 
-        $Plans = powercfg /L
+    }
+    catch {
 
-        $High = $Plans | Where-Object {
+        throw "Could not create a new power scheme: $($_.Exception.Message)"
 
-            $_ -match "High performance|Alto desempenho"
+    }
 
+    $Guids = @()
+
+    foreach ($Line in (powercfg /L)) {
+
+        if ($Line -match "([a-fA-F0-9-]{36})") {
+            $Guids += $Matches[1]
         }
 
     }
 
-    if ($High) {
+    if ($Guids.Count -eq 0) {
 
-        if ($High -match "([a-fA-F0-9\-]{36})") {
+        throw "Could not determine the GUID of the power schemes."
 
-            $Guid = $Matches[1]
+    }
 
-            try {
-                powercfg /S $Guid
-                Write-Log "High Performance plan activated." "OK"
-            }
-            catch {
-                throw "Could not activate High Performance plan: $($_.Exception.Message)"
-            }
+    $NewGuid = $Guids[$Guids.Count - 1]
 
+    try {
+
+        powercfg /s $NewGuid 2>&1 | Out-Null
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "powercfg returned exit code $LASTEXITCODE."
         }
 
     }
-    else {
+    catch {
 
-        Write-Log "Could not activate the plan." "ERROR"
+        throw "Could not activate the new power scheme: $($_.Exception.Message)"
 
     }
+
+    Write-Log "New power scheme activated: $NewGuid" "OK"
 
 }
 

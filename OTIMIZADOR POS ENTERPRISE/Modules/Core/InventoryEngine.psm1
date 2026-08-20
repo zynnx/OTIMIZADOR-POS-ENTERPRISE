@@ -1,4 +1,4 @@
-#=========================================================
+﻿#=========================================================
 # InventoryEngine.psm1
 # Motor do Inventário
 #=========================================================
@@ -9,7 +9,7 @@ function Start-Inventory {
 
     if ($Global:App.Results.Inventory) {
 
-        return $Global:App.Results.Inventory
+        Write-Success "Inventory already completed in this session."
         Pause-App
         return
 
@@ -29,21 +29,26 @@ function Start-Inventory {
 
     }
 
-    $Inventory = @{}
+    #
+    # Group items by name (there may be several disks, monitors, printers, etc.)
+    #
+
+    $Inventory = [ordered]@{}
 
     foreach ($Item in $Items) {
 
-        $Item | Format-List *
+        if ($Inventory.Contains($Item.Name)) {
+
+            $Inventory[$Item.Name] += @($Item.Data)
+
+        }
+        else {
+
+            $Inventory[$Item.Name] = @($Item.Data)
+
+        }
 
     }
-
-    foreach ($Item in $Items) {
-
-        $Inventory[$Item.Name] = $Item.Data
-
-    }
-
-    $Global:App.Results.Inventory = $Inventory
 
     #
     # Mostrar resumo
@@ -54,12 +59,40 @@ function Start-Inventory {
     Write-Host "================="
     Write-Host ""
 
-    Write-Host ("Manufacturer : {0}" -f $Inventory.Computer.Manufacturer)
-    Write-Host ("Model        : {0}" -f $Inventory.Computer.Model)
-    Write-Host ("Windows    : {0}" -f $Inventory.Windows.Caption)
-    Write-Host ("CPU        : {0}" -f $Inventory.Hardware.CPU)
-    Write-Host ("RAM        : {0} GB" -f $Inventory.Hardware.RAM)
-    Write-Host ("IP         : {0}" -f $Inventory.Network.IP)
+    $Computer = Get-FirstValue $Inventory.Computer
+    $Windows = Get-FirstValue $Inventory.Windows
+    $Hardware = Get-FirstValue $Inventory.Hardware
+    $Network = Get-FirstValue $Inventory.Network
+    $Disks = @(
+        $Inventory.Disk | Where-Object {
+            $null -ne $_
+        }
+    )
+
+    if ($Computer) {
+
+        Write-Host ("Manufacturer : {0}" -f $Computer.Manufacturer)
+        Write-Host ("Model        : {0}" -f $Computer.Model)
+        Write-Host ("Serial       : {0}" -f $Computer.SerialNumber)
+
+    }
+
+    if ($Windows) {
+        Write-Host ("Windows      : {0}" -f $Windows.Caption)
+    }
+
+    if ($Hardware) {
+        Write-Host ("CPU          : {0}" -f $Hardware.CPU)
+        Write-Host ("RAM          : {0} GB" -f $Hardware.RAM)
+    }
+
+    if ($Disks.Count -gt 0) {
+        Write-Host ("Disks        : {0} detected" -f $Disks.Count)
+    }
+
+    if ($Network) {
+        Write-Host ("IP           : {0}" -f $Network.IP)
+    }
 
     $Elapsed = Stop-Stopwatch $Watch
 
@@ -67,16 +100,23 @@ function Start-Inventory {
     Write-Host ("Time : {0}" -f (Format-Time $Elapsed))
     Write-Log "Inventory completed." "OK"
 
-    if ($Inventory.POSSoftware -and $Inventory.POSSoftware.Count -gt 0) {
+    $PosSoftware = @($Inventory."POS Software")
 
-        foreach ($App in $Inventory.POSSoftware) {
+    if ($PosSoftware.Count -gt 0) {
 
-            Write-Host ("  • {0} ({1})" -f $App.Name, $App.Version)
+        Write-Host ""
+        Write-Host "POS / critical software detected:" -ForegroundColor Yellow
+        Write-Host ""
+
+        foreach ($App in $PosSoftware) {
+
+            Write-Host ("  - {0} ({1})" -f $App.Name, $App.Version)
 
         }
     }
     else {
 
+        Write-Host ""
         Write-Host " No critical software found."
 
     }
@@ -90,5 +130,18 @@ function Start-Inventory {
     Pause-App
 }
 
+
+function Get-FirstValue {
+
+    param($Value)
+
+    if ($null -eq $Value) { return $null }
+
+    $Array = @($Value)
+
+    if ($Array.Count -eq 0) { return $null }
+
+    return $Array[0]
+}
 
 Export-ModuleMember -Function *

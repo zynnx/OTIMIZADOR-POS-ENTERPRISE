@@ -118,7 +118,6 @@ function Start-Optimization {
         Date    = Get-Date
         Success = $OK
         Errors  = $Erro
-        Actions = $Actions
         Elapsed = $Elapsed
     }
     Pause-App

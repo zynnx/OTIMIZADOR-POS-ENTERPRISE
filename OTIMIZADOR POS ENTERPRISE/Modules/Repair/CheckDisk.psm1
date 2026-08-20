@@ -32,21 +32,32 @@ function Invoke-CheckDiskRepair {
         "/scan"
     )
 
-    $Process = Start-Process `
-        -FilePath "chkdsk.exe" `
-        -ArgumentList $Arguments `
-        -Wait `
-        -PassThru `
-        -NoNewWindow
+    $Output = & chkdsk.exe @($Arguments) 2>&1
+    $ExitCode = $LASTEXITCODE
 
-    if($Process.ExitCode -eq 0){
+    #
+    # /scan is not supported on older Windows. Fall back to /check.
+    #
+
+    if ($ExitCode -ne 0 -and ($Output -join " ") -match "(?i)not.*(valid|supported)|n[ãa]o.*(v[áa]lida|suportada)|opcao|op[çc][ãa]o") {
+
+        Write-Log "/scan is not supported on this Windows version. Falling back to /check." "WARNING"
+
+        $Output = & chkdsk.exe C: /check 2>&1
+        $ExitCode = $LASTEXITCODE
+
+    }
+
+    $Output | ForEach-Object { Write-Host $_ }
+
+    if ($ExitCode -eq 0) {
 
         Write-Log "CHKDSK completed successfully." "OK"
 
     }
-    else{
+    else {
 
-        throw "CHKDSK finished with exit code $($Process.ExitCode)."
+        throw "CHKDSK finished with exit code $ExitCode."
 
     }
 

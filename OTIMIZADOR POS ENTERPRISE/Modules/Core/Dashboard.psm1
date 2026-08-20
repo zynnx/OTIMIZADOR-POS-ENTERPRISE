@@ -4,7 +4,19 @@
 
 function Show-Dashboard {
 
-    $Info = Get-SystemInfo
+    try {
+        $Info = Get-SystemInfo
+    }
+    catch {
+
+        Clear-Host
+        Write-Host ""
+        Write-Host "Could not read the system information:" -ForegroundColor Yellow
+        Write-Host "   $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host ""
+        return
+
+    }
 
     Clear-Host
 
@@ -26,7 +38,11 @@ function Show-Dashboard {
     Write-Host ""
     Write-Host "------------------------------------------------------------" -ForegroundColor DarkCyan
 
-    $Percent = [math]::Round(($Info.DiskFree / $Info.DiskTotal) * 100)
+    $Percent = 0
+
+    if ($Info.DiskTotal -gt 0) {
+        $Percent = [math]::Round(($Info.DiskFree / $Info.DiskTotal) * 100)
+    }
 
     if ($Percent -gt 20) {
         $DiskState = "Healthy"

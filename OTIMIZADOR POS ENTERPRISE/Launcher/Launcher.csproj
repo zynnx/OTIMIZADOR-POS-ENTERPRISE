@@ -8,7 +8,7 @@
     <RootNamespace>OtimizadorPosLauncher</RootNamespace>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>false</SelfContained>
+    <SelfContained>true</SelfContained>
     <UseAppHost>true</UseAppHost>
   </PropertyGroup>
 

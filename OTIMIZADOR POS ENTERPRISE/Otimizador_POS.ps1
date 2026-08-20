@@ -9,8 +9,6 @@
 
 $ErrorActionPreference = "Stop"
 
-$Script:Version = "3.0.0"
-
 $Global:AppRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $Global:App = @{
@@ -32,14 +30,104 @@ $Global:App = @{
 
 $Identity = [Security.Principal.WindowsIdentity]::GetCurrent()
 $Principal = New-Object Security.Principal.WindowsPrincipal($Identity)
+$IsAdmin = $Principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
 
-if (-not $Principal.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)) {
+#-------------------------
+# Ensure the execution policy allows this script
+# (self-relaunch once with -ExecutionPolicy Bypass)
+#-------------------------
+
+$CurrentPolicy = Get-ExecutionPolicy -Scope Process
+
+if (
+    $CurrentPolicy -eq 'Restricted' -or
+    $CurrentPolicy -eq 'AllSigned' -or
+    $CurrentPolicy -eq 'Undefined'
+) {
+
+    $ScriptPath = $MyInvocation.MyCommand.Path
+
+    if ($ScriptPath -and -not $env:OPOS_POLICY_RELAXED) {
+
+        $env:OPOS_POLICY_RELAXED = "1"
+
+        $ProcessInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $ProcessInfo.FileName = (Get-Process -Id $PID).Path
+        $ProcessInfo.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "{0}"' -f $ScriptPath
+        $ProcessInfo.UseShellExecute = $true
+
+        if (-not $IsAdmin) {
+            $ProcessInfo.Verb = "runas"
+        }
+
+        try {
+
+            $Child = [System.Diagnostics.Process]::Start($ProcessInfo)
+
+            if ($Child) {
+                $Child.WaitForExit()
+                exit $Child.ExitCode
+            }
+
+        }
+        catch {
+            # Fall through to the error message below
+        }
+
+    }
+
     Write-Host ""
-    Write-Host "This program must be run as administrator." -ForegroundColor Red
+    Write-Host "The current PowerShell execution policy blocks this application." -ForegroundColor Red
+    Write-Host "Run it with: powershell -NoProfile -ExecutionPolicy Bypass -File `"$MyInvocation.MyCommand.Path`"" -ForegroundColor Yellow
     Write-Host ""
 
     Pause
-    exit
+    exit 1
+
+}
+
+#-------------------------
+# Check for administrator (with self-elevation)
+#-------------------------
+
+if (-not $IsAdmin) {
+
+    $ScriptPath = $MyInvocation.MyCommand.Path
+
+    if ($ScriptPath -and -not $env:OPOS_ELEVATED_RETRY) {
+
+        $env:OPOS_ELEVATED_RETRY = "1"
+
+        $ProcessInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $ProcessInfo.FileName = (Get-Process -Id $PID).Path
+        $ProcessInfo.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "{0}"' -f $ScriptPath
+        $ProcessInfo.UseShellExecute = $true
+        $ProcessInfo.Verb = "runas"
+
+        try {
+
+            $Child = [System.Diagnostics.Process]::Start($ProcessInfo)
+
+            if ($Child) {
+                $Child.WaitForExit()
+                exit $Child.ExitCode
+            }
+
+        }
+        catch {
+            # Fall through to the error message below
+        }
+
+    }
+
+    Write-Host ""
+    Write-Host "This program must be run as administrator." -ForegroundColor Red
+    Write-Host "Elevation was required but could not be completed." -ForegroundColor Red
+    Write-Host ""
+
+    Pause
+    exit 1
+
 }
 
 #-------------------------
@@ -80,8 +168,6 @@ if (!(Test-Path $ConfigFile)) {
 }
 
 $Global:Config = Get-Content $ConfigFile -Raw | ConvertFrom-Json
-
-#Load-Config
 
 #-------------------------
 # Load modules
@@ -131,6 +217,21 @@ $Modules = Get-ChildItem "$Global:AppRoot\Modules" -Filter *.psm1 -Recurse |
 foreach ($Module in $Modules) {
 
     Import-Module $Module.FullName -Force
+
+}
+
+#
+# Load the extra configuration files (Config folder)
+#
+
+try {
+
+    Load-Config
+
+}
+catch {
+
+    Write-Warning "Could not load the Config folder: $($_.Exception.Message)"
 
 }
 

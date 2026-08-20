@@ -1,27 +1,17 @@
-function Show-Header {
+#=========================================================
+# Menu.psm1
+#=========================================================
+
+function Show-AppHeader {
 
     Clear-Host
     $Width = 70
     Write-Host ("=" * $Width) -ForegroundColor Cyan
     Write-Host ""
     Write-Host "        OTIMIZADOR POS ENTERPRISE" -ForegroundColor Yellow
-    Write-Host "               Version 3.0" -ForegroundColor Gray
+    Write-Host ("               Version {0}" -f $Global:App.Version) -ForegroundColor Gray
     Write-Host ""
     Write-Host ("=" * $Width) -ForegroundColor Cyan
-}
-
-function Show-SystemInfo {
-
-    $Info = Get-SystemInfo
-
-    Write-Host ""
-    Write-Host (" Computer : {0}" -f $Info.ComputerName)
-    Write-Host (" Windows  : {0}" -f $Info.Windows)
-    Write-Host (" Build    : {0}" -f $Info.Build)
-    Write-Host (" CPU      : {0}" -f $Info.CPU)
-    Write-Host (" RAM      : {0} GB" -f $Info.RAM)
-    Write-Host (" Disk C:  : {0}/{1} GB free" -f $Info.DiskFree, $Info.DiskTotal)
-    Write-Host (" Uptime   : {0}" -f $Info.Uptime)
 }
 
 function Show-Menu {
@@ -42,6 +32,7 @@ function Show-Menu {
 
     Write-Host ("=" * 70) -ForegroundColor DarkGray
 }
+
 function Write-ExecutionSummary {
     Write-Log "============================================================"
     Write-Log "EXECUTION SUMMARY"
@@ -78,47 +69,125 @@ function Write-ExecutionSummary {
 }
 function Start-MainMenu {
 
-    do {
-        Show-Header
-        Show-Dashboard
-        Show-Menu
+    try {
 
-        $Option = Read-Host "Choose an option"
+        do {
 
-        switch ($Option) {
+            Show-AppHeader
 
-            "1" {
-                Start-CompleteAnalysis
+            try {
+                Show-Dashboard
             }
-            "2" {
-                Start-Cleaning
+            catch {
+                Write-Log "Could not render the dashboard: $($_.Exception.Message)" "WARNING"
             }
-            "3" {
-                Start-Optimization
+
+            Show-Menu
+
+            $Option = Read-Host "Choose an option"
+
+            # EOF / closed stdin: treat as exit to avoid an infinite loop
+            if ($null -eq $Option) {
+                $Option = "0"
             }
-            "4" {
-                Start-Repair
+
+            switch ($Option) {
+
+                "1" {
+                    try {
+                        Start-CompleteAnalysis
+                    }
+                    catch {
+                        Write-Log "Complete Analysis failed: $($_.Exception.Message)" "ERROR"
+                    }
+                }
+
+                "2" {
+                    try {
+                        Start-Cleaning
+                    }
+                    catch {
+                        Write-Log "Smart Cleaning failed: $($_.Exception.Message)" "ERROR"
+                    }
+                }
+
+                "3" {
+                    try {
+                        Start-Optimization
+                    }
+                    catch {
+                        Write-Log "Windows Optimization failed: $($_.Exception.Message)" "ERROR"
+                    }
+                }
+
+                "4" {
+                    try {
+                        Start-Repair
+                    }
+                    catch {
+                        Write-Log "Windows Repair failed: $($_.Exception.Message)" "ERROR"
+                    }
+                }
+
+                "5" {
+                    try {
+                        Start-Diagnostic
+                    }
+                    catch {
+                        Write-Log "Diagnostic failed: $($_.Exception.Message)" "ERROR"
+                    }
+                }
+
+                "6" {
+                    try {
+                        Start-Report
+                    }
+                    catch {
+                        Write-Log "Report failed: $($_.Exception.Message)" "ERROR"
+                    }
+                }
+
+                "7" {
+                    try {
+                        Start-Inventory
+                    }
+                    catch {
+                        Write-Log "Inventory failed: $($_.Exception.Message)" "ERROR"
+                    }
+                }
+
+                "0" {
+                    break
+                }
+
+                default {
+                    Write-Host ""
+                    Write-Host "Invalid option." -ForegroundColor Red
+                    Start-Sleep 1
+                }
+
             }
-            "5" {
-                Start-Diagnostic
-            }
-            "6" {
-                Start-Report
-            }
-            "7" {
-                Start-Inventory
-            }
-            "0" {
-                break
-            }
-            default {
-                Write-Host ""
-                Write-Host "Invalid option." -ForegroundColor Red
-                Start-Sleep 1
-            }
+
+        } until ($Option -eq "0")
+
+    }
+    catch {
+
+        Write-Log "Unexpected error in the main menu: $($_.Exception.Message)" "ERROR"
+
+    }
+    finally {
+
+        try {
+            Write-ExecutionSummary
         }
-    } until ($Option -eq "0")
-    Write-ExecutionSummary
-    Stop-Log
+        catch {
+            # Never block the log shutdown
+        }
+
+        Stop-Log
+
+    }
+
 }
 Export-ModuleMember -Function *

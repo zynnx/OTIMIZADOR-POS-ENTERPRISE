@@ -101,12 +101,28 @@ function Start-Cleaning {
 
     $AfterItems = Get-CleaningItems
 
+    #
+    # Match results by name: after cleaning, the module list/order
+    # could differ from the initial analysis.
+    #
+
+    $AfterByName = @{}
+
+    foreach ($AfterItem in $AfterItems) {
+        $AfterByName[$AfterItem.Name] = $AfterItem.Size
+    }
+
     $TotalAfter = 0
 
-    for ($i = 0; $i -lt $Items.Count; $i++) {
+    foreach ($Item in $Items) {
 
-        $Before = $Items[$i].Size
-        $After = $AfterItems[$i].Size
+        $Before = $Item.Size
+
+        $After = 0
+
+        if ($AfterByName.ContainsKey($Item.Name)) {
+            $After = $AfterByName[$Item.Name]
+        }
 
         $Recovered = $Before - $After
 
@@ -117,7 +133,7 @@ function Start-Cleaning {
         $TotalAfter += $After
 
         Write-Host ("{0,-25} {1,12} -> {2,-12} Recuperado: {3}" -f `
-                $Items[$i].Name,
+                $Item.Name,
             (Convert-Bytes $Before),
             (Convert-Bytes $After),
             (Convert-Bytes $Recovered))

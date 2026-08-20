@@ -161,15 +161,40 @@ function Get-ModuleItems {
     }
 
     # Nomes dos módulos (sem extensão) presentes nessa subpasta
-    $ModuleNamesInFolder = Get-ChildItem -Path $ModulesPath -Filter "*.psm1" -File |
-    Select-Object -ExpandProperty BaseName
+    $ModuleNamesInFolder = @(
+        Get-ChildItem -Path $ModulesPath -Filter "*.psm1" -File |
+        Select-Object -ExpandProperty BaseName
+    )
 
-    $MatchedFunctions = Get-Command -CommandType Function -Name $FunctionPattern -Module $ModuleNamesInFolder -ErrorAction SilentlyContinue
+    if ($ModuleNamesInFolder.Count -eq 0) {
+        Write-Warning "No .psm1 modules found in: $ModulesPath"
+        return $Items
+    }
+
+    $MatchedFunctions = @(
+        Get-Command -CommandType Function -Name $FunctionPattern -Module $ModuleNamesInFolder -ErrorAction SilentlyContinue
+    )
 
     foreach ($func in $MatchedFunctions) {
-        $Items += & $func.Name
+
+        try {
+
+            $Result = & $func.Name
+
+            if ($null -ne $Result) {
+                $Items += @($Result)
+            }
+
+        }
+        catch {
+
+            Write-Warning "Failed to collect '$($func.Name)': $($_.Exception.Message)"
+
+        }
+
     }
-    return $Items
+
+    return @($Items)
 }
 
 #---------------------------------------------------------
