@@ -176,10 +176,15 @@ function Get-ModuleItems {
     )
 
     foreach ($func in $MatchedFunctions) {
+        if ($SubFolder -eq 'Assets') {
+            $flags = @{ Printers = 'ShowPrinters'; Monitors = 'ShowMonitors'; Disks = 'ShowDisks'; Software = 'ShowSoftware' }
+            $flag = $flags[$func.ModuleName]
+            if ($flag -and -not (Get-Config Inventory).$flag) { continue }
+        }
 
         try {
 
-            $Result = & $func.Name
+            $Result = & $func
 
             if ($null -ne $Result) {
                 $Items += @($Result)

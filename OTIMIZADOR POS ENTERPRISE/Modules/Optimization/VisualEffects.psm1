@@ -12,7 +12,7 @@ function Get-VisualEffectsStatus {
         $Value = Get-ItemProperty `
             -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" `
             -Name VisualFXSetting `
-            -ErrorAction SilentlyContinue
+            -ErrorAction Stop
 
         if ($null -eq $Value) {
 
@@ -52,6 +52,7 @@ function Get-VisualEffectsStatus {
 #---------------------------------------------------------
 
 function Invoke-VisualEffectsOptimization {
+    $ErrorActionPreference = 'Stop'
 
     Write-Log "Optimizing visual effects..." "INFO"
 
@@ -95,21 +96,10 @@ function Invoke-VisualEffectsOptimization {
         -Path "HKCU:\Control Panel\Desktop\WindowMetrics" `
         -Name MinAnimate `
         -Value "0" `
-        -ErrorAction SilentlyContinue
+        -ErrorAction Stop
 
     Write-Log "Visual effects optimized." "OK"
 
 }
 
 Export-ModuleMember -Function *
-
-
-
-
-
-
-
-
-
-
-

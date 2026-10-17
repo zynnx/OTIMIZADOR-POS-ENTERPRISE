@@ -1,76 +1,14 @@
-﻿#=========================================================
-# Store.psm1
-# Microsoft Store repair
-#=========================================================
-
-function Get-StoreRepairStatus {
-
-    return [PSCustomObject]@{
-
-        Name = "Microsoft Store"
-
-        Status = "Ready"
-
-        RepairFunction = "Invoke-StoreRepair"
-
-    }
-
+﻿function Get-StoreRepairStatus {
+    [PSCustomObject]@{ Name = 'Microsoft Store'; Status = 'Available'; RepairFunction = 'Invoke-StoreRepair' }
 }
-
-#---------------------------------------------------------
-
 function Invoke-StoreRepair {
-
-    Write-Log "Repairing Microsoft Store..." "INFO"
-
-    try {
-
-        #
-        # Clear the Microsoft Store cache
-        #
-
-        Start-Process `
-            -FilePath "wsreset.exe" `
-            -Wait `
-            -NoNewWindow
-
-        Write-Log "Microsoft Store cache cleared." "OK"
-
+    $process = Start-Process -FilePath "$env:SystemRoot\System32\wsreset.exe" -Wait -PassThru -NoNewWindow
+    if ($process.ExitCode -ne 0) { throw "WSReset exited with code $($process.ExitCode)." }
+    $packages = @(Get-AppxPackage -AllUsers Microsoft.WindowsStore -ErrorAction Stop)
+    if (-not $packages.Count) { return New-OperationResult 'Microsoft Store' Skipped -Reason 'Store is not installed' }
+    foreach ($package in $packages) {
+        Add-AppxPackage -DisableDevelopmentMode -Register (Join-Path $package.InstallLocation 'AppXManifest.xml') -ErrorAction Stop
     }
-    catch {
-
-        throw "Could not execute WSReset."
-
-    }
-
-    try {
-
-        #
-        # Re-register the Microsoft Store
-        #
-
-        Get-AppxPackage -AllUsers Microsoft.WindowsStore |
-        ForEach-Object {
-
-            Add-AppxPackage `
-                -DisableDevelopmentMode `
-                -Register "$($_.InstallLocation)\AppXManifest.xml"
-
-        }
-
-        Write-Log "Microsoft Store re-registered." "OK"
-
-    }
-    catch {
-
-        Write-Log "Could not re-register Microsoft Store." "WARNING"
-
-    }
-
-    Write-Log "Microsoft Store repair completed." "OK"
-
+    New-OperationResult 'Microsoft Store' Success -Changed $packages.Count
 }
-
-Export-ModuleMember -Function *
-
-
+Export-ModuleMember -Function Get-StoreRepairStatus, Invoke-StoreRepair

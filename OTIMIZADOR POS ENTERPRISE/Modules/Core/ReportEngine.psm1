@@ -22,6 +22,11 @@ function Start-Report {
     $Html += Get-SystemSection
 
     $Html += Get-SummarySection
+    if ($Global:App.Results.BeforeDiagnostic) {
+        $before = $Global:App.Results.BeforeDiagnostic
+        $after = $Global:App.Results.Diagnostic
+        $Html += "<h2>Diagnostic comparison</h2><p>Before: $($before.Score)/100 | Latest: $($after.Score)/100</p>"
+    }
 
     $Html += Get-CleaningSection
 

@@ -86,7 +86,7 @@ function Start-Diagnostic {
             }
         }
     }
-    
+
 
     Write-Progress -Activity "Diagnostics" -Completed
 
@@ -171,7 +171,7 @@ function Start-Diagnostic {
     elseif ($FinalScore -ge 95) {
         $State = "EXCELLENT"
     }
-    elseif ($FinalScore -ge 80) {
+    elseif ($FinalScore -ge (Get-Config Diagnostic).MinimumScore) {
         $State = "GOOD"
     }
     else {
@@ -189,7 +189,7 @@ function Start-Diagnostic {
         $_.Recommendation -ne ""
     }
 
-    if ($Recommendations.Count -gt 0) {
+    if ((Get-Config Diagnostic).ShowRecommendations -and $Recommendations.Count -gt 0) {
 
         Write-Host ""
         Write-Host "Recommendations:" -ForegroundColor Yellow

@@ -1,7 +1,1 @@
-﻿{
-    "Version":"3.0",
-    "CreateRestorePoint":true,
-    "RunDISM":true,
-    "RunSFC":false,
-    "CleanBrowsers":true
-}
+﻿{"CreateRestorePoint":true,"RequireRestorePoint":true,"RunDISM":true,"RunSFC":false}

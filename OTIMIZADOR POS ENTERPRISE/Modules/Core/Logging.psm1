@@ -10,7 +10,7 @@ function Start-Log {
     # when the app folder is not writable.
     #
 
-    $LogFolder = Join-Path $Global:AppRoot "Logs"
+    $LogFolder = Join-Path $Global:AppRoot (Get-Config Settings).LogsFolder
 
     try {
 
@@ -26,7 +26,7 @@ function Start-Log {
     }
     catch {
 
-        $LogFolder = "C:\Logs\MeusLogs"
+        throw "Could not create the configured log folder: $($_.Exception.Message)"
 
     }
 

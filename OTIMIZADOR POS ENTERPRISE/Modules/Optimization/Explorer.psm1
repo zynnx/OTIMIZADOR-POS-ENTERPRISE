@@ -53,7 +53,7 @@ function Invoke-ExplorerOptimization {
         try {
             New-Item `
                 -Path $Path `
-                -Force | Out-Null
+                -Force -ErrorAction Stop | Out-Null
         }
         catch {
             throw ("Could not create registry path {0}: {1}" -f $Path, $_.Exception.Message)
@@ -74,40 +74,13 @@ function Invoke-ExplorerOptimization {
                 -Name $Name `
                 -Value $Properties[$Name] `
                 -PropertyType DWord `
-                -Force | Out-Null
+                -Force -ErrorAction Stop | Out-Null
         }
         catch {
             throw "Could not set registry property '$Name': $($_.Exception.Message)"
         }
     }
 
-    # Restart Explorer
-    #
-
-    try{
-
-        Stop-Process `
-            -Name explorer `
-            -Force `
-            -ErrorAction SilentlyContinue
-
-    }
-    catch{}
-
-    Start-Process explorer.exe
-
-    Write-Log "Explorer optimized." "OK"
-
+    Write-Log 'Explorer settings saved. Sign out to apply them.' 'OK'
 }
-
-Export-ModuleMember -Function *
-
-
-
-
-
-
-
-
-
-
+Export-ModuleMember -Function Get-ExplorerStatus, Invoke-ExplorerOptimization

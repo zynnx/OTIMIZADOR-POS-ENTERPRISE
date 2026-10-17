@@ -1,0 +1,8 @@
+﻿**/bin/
+**/obj/
+**/publish/
+**/payload.zip
+**/Logs/
+**/Reports/Report_*.html
+**/Backups/
+.validation/

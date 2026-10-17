@@ -1,4 +1,4 @@
-#=========================================================
+﻿#=========================================================
 # Menu.psm1
 #=========================================================
 
@@ -26,6 +26,8 @@ function Show-Menu {
     Write-Host " 5  Diagnostic" -ForegroundColor Green
     Write-Host " 6  Report" -ForegroundColor Green
     Write-Host " 7  Inventory" -ForegroundColor Green
+    Write-Host " 8  Simulate maintenance (no system changes)" -ForegroundColor Cyan
+    Write-Host " 9  Restore settings from backup" -ForegroundColor Yellow
     Write-Host ""
     Write-Host " 0  Exit" -ForegroundColor Red
     Write-Host ""
@@ -54,9 +56,16 @@ function Write-ExecutionSummary {
             continue
         }
 
+        if ($Module -in @('Cleaning','Optimization','Repair')) {
+            $state = Get-MaintenanceStatus $Result
+            $level = if ($Result.Errors -gt 0) { 'WARNING' } elseif ($state -eq 'COMPLETED') { 'OK' } else { 'INFO' }
+            Write-Log ("{0,-15}: {1} (successful: {2}, errors: {3}, skipped: {4}, planned: {5})" -f $Module, $state, $Result.Success, $Result.Errors, $Result.Skipped, $Result.Planned) $level
+            continue
+        }
+
         if ($Result.Errors -gt 0) {
             Write-Log `
-            ("{0,-15}: OK ({1} errors)" -f $Module, $Result.Errors) `
+            ("{0,-15}: FAILED OR PARTIAL ({1} errors)" -f $Module, $Result.Errors) `
                 "WARNING"
         }
         else {
@@ -156,6 +165,17 @@ function Start-MainMenu {
                     }
                 }
 
+                "8" {
+                    try { Start-CompleteAnalysis -Simulation }
+                    catch { Write-Log $_.Exception.Message ERROR }
+                }
+                "9" {
+                    try {
+                        $backup = Read-Host 'Path to Settings_*.clixml backup (Enter to cancel)'
+                        if (-not [string]::IsNullOrWhiteSpace($backup)) { Restore-MaintenanceSnapshot -Path $backup }
+                    } catch { Write-Log $_.Exception.Message ERROR }
+                    Pause-App
+                }
                 "0" {
                     break
                 }

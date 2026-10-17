@@ -1,4 +1,4 @@
-#=========================================================
+﻿#=========================================================
 # ThumbnailCache.psm1
 # Thumbnail and icon cache cleanup
 #=========================================================
@@ -63,72 +63,6 @@ function Get-ThumbnailCacheAnalysis {
 #---------------------------------------------------------
 
 function Invoke-ThumbnailCacheCleanup {
-
-    $Path = Join-Path $env:LOCALAPPDATA "Microsoft\Windows\Explorer"
-
-    if (!(Test-Folder $Path)) {
-
-        Write-Log "Thumbnail cache not found." "WARNING"
-
-        return
-
-    }
-
-    Write-Log "Cleaning thumbnail cache..." "INFO"
-
-    $Removed = 0
-    $Errors = 0
-
-    try {
-
-        Get-ChildItem `
-            -Path $Path `
-            -Force `
-            -File `
-            -ErrorAction SilentlyContinue |
-
-        Where-Object {
-
-            $_.Name -like "thumbcache*.db" -or
-            $_.Name -like "iconcache*.db"
-
-        } |
-
-        ForEach-Object {
-
-            try {
-
-                Remove-Item `
-                    $_.FullName `
-                    -Force `
-                    -ErrorAction Stop
-
-                $Removed++
-
-            }
-            catch {
-
-                $Errors++
-
-            }
-
-        }
-
-    }
-    catch {
-
-        Write-Log $_.Exception.Message "ERROR"
-
-    }
-
-    Write-Log "Miniaturas removidas: $Removed" "INFO"
-
-    if ($Errors -gt 0) {
-
-        Write-Log "Files ignored: $Errors" "WARNING"
-
-    }
-
+    return Remove-CleanupContent -Path (Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Explorer') -Patterns @('thumbcache*.db','iconcache*.db')
 }
-
-Export-ModuleMember -Function *
+Export-ModuleMember -Function Get-ThumbnailCacheAnalysis, Invoke-ThumbnailCacheCleanup

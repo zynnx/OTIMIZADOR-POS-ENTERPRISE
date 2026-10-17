@@ -1,4 +1,4 @@
-#=========================================================
+﻿#=========================================================
 
 # SummarySection.psm1
 
@@ -7,7 +7,7 @@
 #=========================================================
 
 function Get-SummarySection {
-    
+
     $Diagnostic = $Global:App.Results.Diagnostic
     $Cleaning = $Global:App.Results.Cleaning
     $Optimization = $Global:App.Results.Optimization
@@ -78,11 +78,15 @@ function Get-SummarySection {
         $OverallStatus = "NOT EXECUTED"
         $StatusClass = "warn"
     }
+    elseif ($Diagnostic.State -in @('ERROR','CRITICAL')) {
+        $OverallStatus = $Diagnostic.State
+        $StatusClass = 'error'
+    }
     elseif ($DiagnosticScore -ge 95) {
         $OverallStatus = "EXCELLENT"
         $StatusClass = "ok"
     }
-    elseif ($DiagnosticScore -ge 80) {
+    elseif ($DiagnosticScore -ge (Get-Config Diagnostic).MinimumScore) {
         $OverallStatus = "GOOD"
         $StatusClass = "ok"
     }
@@ -100,7 +104,7 @@ function Get-SummarySection {
     #-----------------------------------------------------
 
     if ($Cleaning) {
-        $CleaningStatus = "EXECUTED"
+        $CleaningStatus = Get-MaintenanceStatus $Cleaning
     }
     else {
         $CleaningStatus = "NOT EXECUTED"
@@ -111,7 +115,7 @@ function Get-SummarySection {
     #-----------------------------------------------------
 
     if ($Optimization) {
-        $OptimizationStatus = "EXECUTED"
+        $OptimizationStatus = Get-MaintenanceStatus $Optimization
     }
     else {
         $OptimizationStatus = "NOT EXECUTED"
@@ -122,7 +126,7 @@ function Get-SummarySection {
     #-----------------------------------------------------
 
     if ($Repair) {
-        $RepairStatus = "EXECUTED"
+        $RepairStatus = Get-MaintenanceStatus $Repair
     }
     else {
         $RepairStatus = "NOT EXECUTED"
@@ -134,7 +138,7 @@ function Get-SummarySection {
 
     #-----------------------------------------------------
 
-    $CleaningClass = if ($Cleaning) { "ok" } else { "info" }
+    $CleaningClass = if ($Cleaning.Errors -gt 0) { 'error' } elseif ($Cleaning.Success -gt 0) { 'ok' } else { 'info' }
 
     $CleaningFiles = 0
     $CleaningRecovered = 0
@@ -149,7 +153,7 @@ function Get-SummarySection {
         }
     }
 
-    $OptimizationClass = if ($Optimization) { "ok" } else { "info" }
+    $OptimizationClass = if ($Optimization.Errors -gt 0) { 'error' } elseif ($Optimization.Success -gt 0) { 'ok' } else { 'info' }
     $OptimizationSuccess = 0
     $OptimizationErrors = 0
 
@@ -163,7 +167,7 @@ function Get-SummarySection {
         }
     }
 
-    $RepairClass = if ($Repair) { "ok" } else { "info" }
+    $RepairClass = if ($Repair.Errors -gt 0) { 'error' } elseif ($Repair.Success -gt 0) { 'ok' } else { 'info' }
     $RepairSuccess = 0
     $RepairErrors = 0
     $RepairElapsed = $null
@@ -190,7 +194,7 @@ function Get-SummarySection {
     if ($DiagnosticScore -ge 95) {
         $ScoreBarClass = "score-ok"
     }
-    elseif ($DiagnosticScore -ge 80) {
+    elseif ($DiagnosticScore -ge (Get-Config Diagnostic).MinimumScore) {
         $ScoreBarClass = "score-good"
     }
     elseif ($DiagnosticScore -ge 60) {

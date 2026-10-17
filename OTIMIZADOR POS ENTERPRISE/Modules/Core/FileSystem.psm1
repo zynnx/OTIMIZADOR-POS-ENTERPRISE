@@ -96,61 +96,13 @@ function Get-FilesCount {
 #---------------------------------------------------------
 
 function Remove-FolderContent {
-
-    param(
-        [string]$Path
-    )
-
-    if (!(Test-Folder $Path)) {
-        return
-    }
-
-    try {
-
-        Get-ChildItem `
-            -Path $Path `
-            -Force `
-            -ErrorAction SilentlyContinue |
-        Remove-Item `
-            -Force `
-            -Recurse `
-            -ErrorAction SilentlyContinue
-
-    }
-    catch {
-
-    }
-
+    param([Parameter(Mandatory)][string]$Path)
+    Remove-CleanupContent -Path $Path
 }
-
-#---------------------------------------------------------
-
 function Remove-FileSafe {
-
-    param(
-        [string]$Path
-    )
-
-    try {
-
-        if (Test-Path $Path) {
-
-            Remove-Item `
-                $Path `
-                -Force `
-                -ErrorAction SilentlyContinue
-
-        }
-
-    }
-    catch {
-
-    }
-
+    param([Parameter(Mandatory)][string]$Path)
+    if (Test-Path -LiteralPath $Path) { Remove-Item -LiteralPath $Path -Force -ErrorAction Stop }
 }
-
-#---------------------------------------------------------
-
 function Get-FreeSpace {
 
     param(

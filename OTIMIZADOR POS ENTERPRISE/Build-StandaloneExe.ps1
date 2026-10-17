@@ -12,7 +12,6 @@ $Root        = Split-Path -Parent $MyInvocation.MyCommand.Path
 $LauncherDir = Join-Path $Root "Launcher"
 $CsProj      = Join-Path $LauncherDir "Launcher.csproj"
 $PublishDir  = Join-Path $LauncherDir "publish"
-$ObjDir      = Join-Path $LauncherDir "obj"
 $PayloadPath = Join-Path $LauncherDir "payload.zip"
 $ExePath     = Join-Path $PublishDir "Otimizador_POS.exe"
 
@@ -41,14 +40,10 @@ Test-PathExists (Join-Path $Root "Config")  "Config folder"
 Test-PathExists (Join-Path $Root "Modules") "Modules folder"
 Test-PathExists $CsProj "Launcher project (Launcher.csproj)"
 
-#---- 2) Stop any running instance (avoids file locks) ----------------------
-Get-Process -Name "Otimizador_POS" -ErrorAction SilentlyContinue | Stop-Process -Force
-
-#---- 3) Clean previous build artifacts -------------------------------------
-foreach ($p in @($PublishDir, $PayloadPath, $ObjDir)) {
-    if (Test-Path $p) {
-        Remove-Item $p -Recurse -Force -ErrorAction SilentlyContinue
-    }
+# Validate source and configuration before packaging. Do not interrupt an active POS session.
+& (Join-Path $Root 'parse-check.ps1')
+if (Get-Process -Name "Otimizador_POS" -ErrorAction SilentlyContinue) {
+    throw 'Close Otimizador_POS before building a new executable.'
 }
 
 #---- 4) Build the embedded payload -----------------------------------------
@@ -90,6 +85,3 @@ if ($FrameworkDependent) {
 } else {
     Write-Host "Self-contained build - portable, no .NET runtime needed on the target PC." -ForegroundColor Green
 }
-
-
-

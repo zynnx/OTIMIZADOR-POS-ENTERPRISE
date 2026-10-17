@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Security.Principal;
@@ -113,7 +113,7 @@ if (!File.Exists(scriptPath))
 
 var startInfo = new ProcessStartInfo
 {
-    FileName = "powershell.exe",
+    FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe"),
     Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\"",
     WorkingDirectory = appRoot,
     UseShellExecute = false
@@ -125,7 +125,7 @@ try
 {
     using var process = Process.Start(startInfo);
     process?.WaitForExit();
-    exitCode = process?.ExitCode ?? 0;
+    exitCode = process?.ExitCode ?? 1;
 }
 catch (Exception ex)
 {
@@ -141,6 +141,7 @@ catch (Exception ex)
 // then remove the temporary folder.
 //
 string? sessionFolder = null;
+bool sessionSaved = false;
 
 try
 {
@@ -149,46 +150,23 @@ try
         "OtimizadorPOS",
         "Sessions");
 
-    Directory.CreateDirectory(sessionRoot);
-
-    sessionFolder = Path.Combine(sessionRoot, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
-    Directory.CreateDirectory(sessionFolder);
-
-    bool hasContent = false;
-
-    foreach (string sub in new[] { "Reports", "Logs" })
-    {
-        string src = Path.Combine(appRoot, sub);
-
-        if (!Directory.Exists(src))
-        {
-            continue;
-        }
-
-        string dst = Path.Combine(sessionFolder, sub);
-        Directory.CreateDirectory(dst);
-
-        foreach (string file in Directory.GetFiles(src))
-        {
-            File.Copy(file, Path.Combine(dst, Path.GetFileName(file)), true);
-            hasContent = true;
-        }
-    }
-
-    if (!hasContent)
-    {
-        sessionFolder = null;
-    }
+    sessionFolder = SessionStorage.Save(appRoot, sessionRoot);
+    sessionSaved = true;
 }
-catch
+catch (Exception ex)
 {
-    // Best effort: keep going and just remove the temp folder
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine($"Could not save all session data: {ex.Message}");
+    Console.WriteLine($"Original files preserved at: {appRoot}");
+    Console.ResetColor();
+    exitCode = 1;
     sessionFolder = null;
 }
 
 try
 {
-    Directory.Delete(appRoot, recursive: true);
+    if (sessionSaved)
+        Directory.Delete(appRoot, recursive: true);
 }
 catch
 {

@@ -158,11 +158,10 @@ $ConfigFile = Join-Path $Global:AppRoot "Config\Config.json"
 if (!(Test-Path $ConfigFile)) {
     @'
 {
-    "Version":"3.0",
     "CreateRestorePoint":true,
+    "RequireRestorePoint":true,
     "RunDISM":true,
-    "RunSFC":false,
-    "CleanBrowsers":true
+    "RunSFC":false
 }
 '@ | Set-Content $ConfigFile -Encoding UTF8
 }
@@ -231,7 +230,7 @@ try {
 }
 catch {
 
-    Write-Warning "Could not load the Config folder: $($_.Exception.Message)"
+    throw "Invalid configuration. Startup stopped: $($_.Exception.Message)"
 
 }
 

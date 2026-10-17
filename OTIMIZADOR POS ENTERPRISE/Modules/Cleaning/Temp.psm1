@@ -44,63 +44,6 @@ function Get-TempAnalysis {
 #---------------------------------------------------------
 
 function Invoke-TempCleanup {
-
-    $Path = $env:TEMP
-
-    if (!(Test-Folder $Path)) {
-
-        Write-Log "TEMP folder does not exist." "WARNING"
-        return
-
-    }
-
-    Write-Log "Cleaning user TEMP..." "INFO"
-
-    $Removed = 0
-    $Errors  = 0
-
-    try {
-
-        Get-ChildItem `
-            -Path $Path `
-            -Force `
-            -ErrorAction SilentlyContinue |
-
-        ForEach-Object {
-
-            try {
-
-                Remove-Item `
-                    $_.FullName `
-                    -Force `
-                    -Recurse `
-                    -ErrorAction Stop
-
-                $Removed++
-
-            }
-            catch {
-
-        # Ignore files in use
-            }
-
-        }
-
-    }
-    catch {
-
-        Write-Log $_.Exception.Message "ERROR"
-
-    }
-
-    Write-Log "Items removed: $Removed" "INFO"
-
-    if ($Errors -gt 0) {
-
-        Write-Log "Items ignored (in use): $Errors" "WARNING"
-
-    }
-
+    return Remove-CleanupContent -Path $env:TEMP
 }
-
-Export-ModuleMember -Function *
+Export-ModuleMember -Function Get-TempAnalysis, Invoke-TempCleanup

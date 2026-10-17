@@ -1,0 +1,31 @@
+﻿name: Validate and build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: PowerShell 5.1 regression checks and syntax validation
+        shell: powershell
+        run: '& ".\OTIMIZADOR POS ENTERPRISE\Tests\Test-Project.ps1"'
+      - name: Launcher session persistence regression checks
+        shell: powershell
+        run: |
+          dotnet run --project "OTIMIZADOR POS ENTERPRISE/Tests/Launcher.Tests/Launcher.Tests.csproj" --configuration Release -p:NuGetAudit=false
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build portable executable
+        shell: powershell
+        run: '& ".\OTIMIZADOR POS ENTERPRISE\Build-StandaloneExe.ps1"'
+      - name: Store executable for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: Otimizador-POS-Windows-x64
+          path: OTIMIZADOR POS ENTERPRISE/Launcher/publish/Otimizador_POS.exe

@@ -1,9 +1,1 @@
-{
-    "CleanTemp": true,
-
-    "CleanWindowsTemp": true,
-
-    "CleanPrefetch": false,
-
-    "CleanRecycleBin": true
-}
+﻿{"CleanTemp":true,"CleanWindowsTemp":true,"CleanRecycleBin":false,"CleanThumbnailCache":false,"CleanWindowsUpdate":false,"CleanDeliveryOptimization":false}

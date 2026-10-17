@@ -1,9 +1,1 @@
-{
-    "ClearDNS": true,
-
-    "ResetWinsock": true,
-
-    "FlushStore": true,
-
-    "OptimizeNTFS": true
-}
+﻿{"PowerPlan":false,"VisualEffects":false,"Services":false,"SSD":true,"Explorer":false}
