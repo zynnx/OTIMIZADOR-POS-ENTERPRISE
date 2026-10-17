@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Otimizador_POS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd5b448bcc0ebd87270cab724d10c4387c3763b1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+698b3c482ba336b233fbba1da1c0cb8376a1c269")]
 [assembly: System.Reflection.AssemblyProductAttribute("Otimizador_POS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Otimizador_POS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
