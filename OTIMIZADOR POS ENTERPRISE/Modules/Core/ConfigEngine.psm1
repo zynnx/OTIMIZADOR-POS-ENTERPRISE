@@ -1,6 +1,6 @@
 ﻿function Get-ConfigDefaults {
     return @{
-        Config = @{ CreateRestorePoint = $true; RequireRestorePoint = $true; RunDISM = $true; RunSFC = $false }
+        Config = @{ CreateRestorePoint = $false; RequireRestorePoint = $false; RunDISM = $true; RunSFC = $false }
         Cleaning = @{ CleanTemp = $true; CleanWindowsTemp = $true; CleanRecycleBin = $false; CleanThumbnailCache = $false; CleanWindowsUpdate = $false; CleanDeliveryOptimization = $false }
         Optimization = @{ PowerPlan = $false; VisualEffects = $false; Services = $false; SSD = $true; Explorer = $false }
         Repair = @{ Windows = $true; WindowsUpdate = $false; CheckDisk = $false; ComponentStore = $false; Store = $false }

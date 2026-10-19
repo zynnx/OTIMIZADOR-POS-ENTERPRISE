@@ -12,6 +12,7 @@ $originalTemp = $env:TEMP
 $originalRoot = $Global:AppRoot
 try {
     Load-Config
+    Assert-True (-not (Get-Config Config).CreateRestorePoint -and -not (Get-Config Config).RequireRestorePoint) 'Restore points are disabled by default'
     Assert-True (-not (Get-Config Config).RunSFC) 'RunSFC defaults to false'
     Assert-True (-not (Get-Config Optimization).Services) 'Conservative profile leaves services unchanged'
     $valid = $Global:App.Config
@@ -65,6 +66,8 @@ try {
         Assert-True ($Global:NativeRepairs -eq 1 -and $results[0].Status -eq 'Success' -and $results[0].Reason -match 'Restart') 'DISM runs once and records restart-required completion'
     }
     Load-Config
+    $Global:App.Results = @{}
+    $Global:App.ProtectionReady = $true
     & (Get-Module AnalysisEngine) {
         function Pause-App { }
         function Start-Diagnostic { $Global:Flow += 'diagnostic'; $Global:App.Results.Diagnostic = [PSCustomObject]@{ Score = $Global:Flow.Count } }
@@ -72,9 +75,9 @@ try {
         function Start-Report { $Global:Flow += 'report' }
         function Get-MaintenanceDefinitions {
             param($Category)
-            if ($Category -eq 'Cleaning') { [PSCustomObject]@{ Name = 'Test cleanup'; Key = 'CleanTemp'; Enabled = $true } }
+            [PSCustomObject]@{ Name = 'Test operation'; Key = $Category; Enabled = $true }
         }
-        function Read-Host { return '1' }
+        function Read-Host { throw 'Complete analysis must not prompt' }
         function Invoke-MaintenanceCategory {
             [CmdletBinding(SupportsShouldProcess)]
             param($Category,$Only)
@@ -83,15 +86,15 @@ try {
         }
         $Global:Flow = @()
         Start-CompleteAnalysis
-        Assert-True (($Global:Flow -join ',') -eq 'diagnostic,inventory,maintenance,diagnostic,report') 'Complete analysis diagnoses before and after selected maintenance'
+        Assert-True (($Global:Flow -join ',') -eq 'diagnostic,inventory,maintenance,maintenance,maintenance,diagnostic,report') 'Complete analysis runs every enabled category without prompting'
         Assert-True ($Global:App.Results.BeforeDiagnostic.Score -lt $Global:App.Results.Diagnostic.Score) 'Before diagnostic remains available for comparison'
         $Global:Flow = @()
         Start-CompleteAnalysis -Simulation
         Assert-True ('maintenance' -notin $Global:Flow -and 'planned' -in $Global:Flow) 'Complete simulation never applies its plan'
-        function Read-Host { return '' }
+        function Get-MaintenanceDefinitions { param($Category) }
         $Global:Flow = @()
         Start-CompleteAnalysis
-        Assert-True (($Global:Flow -join ',') -eq 'diagnostic,inventory,report') 'Empty selection generates a diagnostic-only report'
+        Assert-True (($Global:Flow -join ',') -eq 'diagnostic,inventory,report') 'No enabled operations generates a diagnostic-only report'
     }
     & (Get-Module Rollback) {
         function Import-Clixml {

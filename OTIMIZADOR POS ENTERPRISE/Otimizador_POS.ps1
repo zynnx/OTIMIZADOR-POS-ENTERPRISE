@@ -158,8 +158,8 @@ $ConfigFile = Join-Path $Global:AppRoot "Config\Config.json"
 if (!(Test-Path $ConfigFile)) {
     @'
 {
-    "CreateRestorePoint":true,
-    "RequireRestorePoint":true,
+    "CreateRestorePoint":false,
+    "RequireRestorePoint":false,
     "RunDISM":true,
     "RunSFC":false
 }

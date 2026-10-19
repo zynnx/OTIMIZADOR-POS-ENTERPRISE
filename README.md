@@ -1,4 +1,4 @@
-﻿# OTIMIZADOR POS ENTERPRISE
+# OTIMIZADOR POS ENTERPRISE
 
 Windows 10/11 x64 maintenance console for POS environments, written in PowerShell 5.1 with a portable .NET 8 launcher.
 
@@ -13,7 +13,7 @@ Windows 10 and Windows 11 x64 are the intended platforms. Compatibility is based
 | Windows 11 x64 | Intended platform; individual releases and editions still require validation. |
 | Windows 10 x64, particularly 22H2 | Intended platform; older releases require separate validation. Technical compatibility does not imply that the Windows release remains supported by Microsoft. |
 | Windows 10/11 Enterprise LTSC and IoT Enterprise x64 | Expected compatibility, subject to validation of the exact release and available Windows components. |
-| Windows Server | Not a supported project target. The restore-point mechanism is client-only, so the default protection settings can prevent maintenance. |
+| Windows Server | Not a supported project target. The optional restore-point mechanism is client-only and disabled by default. |
 | Windows 7, 8, 8.1 and older POSReady systems | Not supported by the current .NET 8 executable. |
 | Windows x86 (32-bit) and ARM64 | No dedicated build or validation; the current executable targets `win-x64`. ARM64 emulation has not been validated. |
 
@@ -38,7 +38,7 @@ The standalone executable also requests Administrator privileges. Diagnostics, i
 
 | Option | Behavior |
 | --- | --- |
-| 1 — Complete Analysis | Diagnose first, capture inventory, display enabled operations, accept a selection, execute it, diagnose again and generate a report. |
+| 1 — Complete Analysis | Diagnose first, capture inventory, automatically execute all enabled operations, diagnose again and generate a report without additional prompts. |
 | 2 — Smart Cleaning | Execute enabled cleaning operations. |
 | 3 — Windows Optimization | Execute enabled optimization operations. |
 | 4 — Windows Repair | Execute enabled repair operations. |
@@ -49,7 +49,7 @@ The standalone executable also requests Administrator privileges. Diagnostics, i
 | 9 — Restore settings | Restore a selected `Settings_*.clixml` backup for the same computer and Windows user. |
 | 0 — Exit | Write the execution summary and close. |
 
-In Complete Analysis, enter operation numbers separated by commas, `ALL`, or press Enter for diagnostics only. Schedule actual maintenance outside trading hours.
+Complete Analysis runs all operations enabled in the configuration without additional input. Schedule actual maintenance outside trading hours.
 
 Operations are reported as `Success`, `Failed`, `Partial`, `Skipped` or `Planned`. Failed or partial operations are not counted as successful. Reports include individual errors and the before/latest diagnostic scores.
 
@@ -77,7 +77,7 @@ The old `CleanBrowsers`, `CleanPrefetch`, `ClearDNS`, `ResetWinsock`, `FlushStor
 
 ## Protection and recovery
 
-Before the first real maintenance operation in a session, the app requests a restore point and saves previous registry values, service startup settings and the active power plan in `Backups/Settings_*.clixml`. With the defaults, failure to create the required restore point prevents maintenance. Setting `CreateRestorePoint` to false explicitly disables that protection; `RequireRestorePoint` controls whether a creation failure stops execution.
+Before the first real maintenance operation in a session, the app saves previous registry values, service startup settings and the active power plan in `Backups/Settings_*.clixml`. Restore-point creation is currently disabled: `CreateRestorePoint` and `RequireRestorePoint` default to false. If creation is enabled later, `RequireRestorePoint` controls whether a creation failure stops execution.
 
 Option 9 restores the captured Explorer/visual registry values, startup types for `WerSvc`, `WSearch` and `SysMain`, and the original power plan. It does not recover deleted files or undo DISM, Store, Windows Update repair or ReTrim. Windows System Restore is separate from this settings backup. Sign out or restart after restoring visual settings.
 
